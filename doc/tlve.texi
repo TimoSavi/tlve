@@ -1,0 +1,742 @@
+\input texinfo @c -*-texinfo-*-
+@c This file uses the @command command introduced in Texinfo 4.0.
+@c %**start of header
+@setfilename tlve.info
+@settitle tlve
+@finalout
+@setchapternewpage off
+@c %**end of header
+@include version.texi
+
+@ifinfo
+@dircategory Utilities
+@direntry
+* tlve: (tlve).                 A program to parse tag-length-value structures and print them in various text-based formats.
+@end direntry
+@end ifinfo
+
+
+@ifinfo
+This file documents version @value{VERSION} of @command{tlve} command which is a program to parse tag-length-value structures and print them in various text-based formats
+
+Copyright @copyright{} 2009 Timo Savinen
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+
+@end ignore
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Foundation.
+@end ifinfo
+
+@titlepage
+@title tlve
+@subtitle A program to parse tag-length-value structures and print them in various text-based formats
+@subtitle for tlve Version @value{VERSION}
+@author by Timo Savinen
+
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 2009 Timo Savinen
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Foundation.
+@end titlepage
+
+@c All the nodes can be updated using the EMACS command
+@c texinfo-every-node-update, which is normally bound to C-c C-u C-e.
+@node Top, Overview, (dir), (dir)
+
+
+@ifinfo
+This file documents the @command{tlve} command to parse tag-length-value structures and print them in various text-based formats.
+@end ifinfo
+
+@c All the menus can be updated with the EMACS command
+@c texinfo-all-menus-update, which is normally bound to C-c C-u C-a.
+@menu
+* Overview::                    Preliminary information.
+* Sample::                      Sample output from @command{tlve}.
+* Invoking tlve::               How to run @command{tlve}.
+* Configuration::               How to configure @command{tlve}.
+* Examples::                    How to use @command{tlve}.
+* Problems::                    Reporting bugs.
+@end menu
+
+@node Overview, Sample, Top, Top
+@chapter Overview
+@cindex greetings
+@cindex overview
+
+The @command{tlve} program is a command-line tool for parsing different
+@acronym{tlv,tag-length-value} structures and for printing them in various text-based formats.
+In order to correctly parse the input data @command{tlve} uses a text-based configuration.
+Default configuration file is @file{~/.tlverc} (@file{tlve.rc} in windows).
+
+@command{tlve} can parse text or binary (including ASN.1 BER) tlv structures. Tag, length and value can have 
+fixed length or separated format. Values can be presented in different formats and converted to different encoding.
+
+@command{tlve} was written by Timo Savinen.
+
+This file documents version @value{VERSION} of @command{tlve}.
+
+@node Sample, Invoking tlve, Overview, Top
+@chapter Sample Output
+@cindex sample
+
+Here are some realistic examples of running @command{tlve}.
+
+This is the output of the command @w{@samp{cat ber.rc}}:
+
+@cartouche
+@example
+$cat ber.rc
+# ASN.1 ber example configuration.
+# This file is for reading any ASN.1 BER encoded file, this
+# example contains names only for Universal class tags, add your
+# own tags using tlv-keyword
+
+#  test this by command:
+#  tlve -c ber.tlverc -s BER <inputfile>
+# or
+#  tlve -c ber.tlverc -s BER -p dump <inputfile>
+
+tl name=asn1ber tag=ber length=ber
+
+structure name=BER content-tl=asn1ber
+tlv name=Boolean tag="U-1" value-type=uint
+tlv name=Integer tag="U-2" value-type=int
+tlv name=BitString tag="U-3" maybe-constructed=yes  value-type=bit-string
+tlv name=OctetString tag="U-4" maybe-constructed=yes value-type=hex
+tlv name=NULL tag="U-5" value-type=hex
+tlv name=ObjectIdentifier tag="U-6" value-type=oid
+tlv name=ObjectDescriptor tag="U-7" value-type=hex
+tlv name=External tag="U-8" 
+tlv name=Real tag="U-9" value-type=hex
+tlv name=Enumerated tag="U-10" value-type=int
+tlv name=EmbeddedPvd tag="U-11" value-type=hex
+tlv name=UTF8String tag="U-12" maybe-constructed=yes value-type=string encoding=UTF8
+tlv name=RelativeOid tag="U-13" value-type=hex
+tlv name=Sequence tag="U-16" 
+tlv name=Set tag="U-17" 
+tlv name=NumericString tag="U-18" value-type=string 
+tlv name=PrintableString tag="U-19" value-type=string 
+tlv name=T61String tag="U-20" value-type=string 
+tlv name=VideotexString tag="U-21" value-type=string 
+tlv name=IA5String tag="U-22" value-type=string encoding=ISO646-FI    # change encoding to suit your needs
+tlv name=UTCTime tag="U-23" value-type=string 
+tlv name=GeneralizedTime tag="U-24" value-type=string 
+tlv name=GraphicString tag="U-25" value-type=string 
+tlv name=VisibleString tag="U-26" value-type=string 
+tlv name=GeneralString tag="U-27" value-type=string 
+tlv name=UniversalString tag="U-28" value-type=string 
+tlv name=CharacterString tag="U-29" value-type=string 
+tlv name=BMPString tag="U-30" value-type=string encoding=UCS-4
+structure-end
+
+# printing definitions
+# XML produced using this may not be wellformed
+print name=XML file-start="<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" \
+      value="<%n>%v</%n>\n" constructor="<%n>\n" constructor-end="</%n>\n" encoding="ISO-8859-1" indent="  "
+
+print name=dump file-start="--- File: %f ---\n\n" value="%n=%v (tag: %d, value %D)\n" constructor="%n (tag: %d)<\n" constructor-end=">\n" indent="  "
+@end example
+@end cartouche
+
+
+This is the first few lines from output of the command 
+@w{@samp{tlve -c ber.rc -s BER -p XML /usr/share/beid/certs/beid-cert-government.der}}:
+
+@cartouche
+@example
+$tlve -c ber.rc -s BER -p XML  /usr/share/beid/certs/beid-cert-government.der
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Sequence>
+ <Sequence>
+  <[C-0]>
+   <Integer>2</Integer>
+  </[C-0]>
+  <Integer>4408622999086524144</Integer>
+  <Sequence>
+   <ObjectIdentifier>1 2 840 113549 1 1 5</ObjectIdentifier>
+   <NULL></NULL>
+  </Sequence>
+  <Sequence>
+   <Set>
+    <Sequence>
+     <ObjectIdentifier>2 5 4 6</ObjectIdentifier>
+     <PrintableString>BE</PrintableString>
+    </Sequence>
+   </Set>
+   <Set>
+    <Sequence>
+     <ObjectIdentifier>2 5 4 3</ObjectIdentifier>
+     <PrintableString>Belgium Root CA</PrintableString>
+    </Sequence>
+   </Set>
+  </Sequence>
+  <Sequence>
+   <UTCTime>030127000000Z</UTCTime>
+   <UTCTime>090127000000Z</UTCTime>
+  </Sequence>
+  .
+  .
+  .
+@end example
+@end cartouche
+In this example an ASN.1 DER coded certificate was converted to XML.
+
+@node Invoking tlve, Configuration, Sample, Top
+@chapter Invoking @command{tlve}
+@cindex invoking
+@cindex version
+@cindex options
+@cindex usage
+@cindex help
+@cindex getting help
+
+The format for running the @command{tlve} program is:
+
+@example
+tlve @var{option} @dots{} @var{file} @dots{}
+@end example
+
+@code{tlve} supports the following options:
+
+@table @code
+@item --configuration=@var{name}
+@itemx -c @var{name}
+Read configuration from @var{name} instead of ~/.tlverc.
+
+@item --debug
+@itemx -d
+Dump unprocessable data to @file{tlve.debug}.
+
+@item --name-list=@var{list}
+@itemx -n
+Print only elements having name or tag in comma separated list @var{list}. @command{tlve} recognises
+the name if it is given with keyword @code{tlv} in configuration file. A tag must be enclosed in @code{[ ]}.
+
+@item --structure=@var{name}
+@itemx -s
+The input data is processed using structure information @var{name}. If not given @command{tlve} uses structure named
+as @code{default}.
+
+@item --expression @var{name}=@var{value}
+@itemx -e 
+Expression can be used to select blocks of elements. 
+A block can be defined by by option @option{-l,--start-level} and/or @option{-n,--name}. 
+If @option{-l} or @option{-n} is not given, only names appearing in this option are printed. 
+A block is printed if any of given expression evaluates true.
+
+@var{name} is name of a primitive element and the expression evaluates true if the contents of the element matches the regular expression in @var{value}.
+
+@item --and
+@itemx -a
+As default multiple expressions are combined with logical or. If this option is given multiple expressions are combined with logical and.
+
+@item --print=@var{name}
+@itemx -p
+Output is formatted using printing definition @var{name}. Default is to use printing definition named as @code{default}.
+
+@item --output=@var{name}
+@itemx -o @var{name}
+Write output to @var{name} instead of standard output.
+
+@item --start-level=@var{level}
+@itemx -l @var{level}
+Only elements which are in level @var{level} or lower in element hierarchy are printed.  First (highest) level is level number one.  
+
+If @option{-e, --expression} is used with this option and 
+the expression(s) in level @var{level} or in lower levels evaluates true, then all elements in @var{level} 
+or lower levels are printed in that particular hierarchy.
+
+If both this option and @option{-n, --name} are defined, only names which appear in @var{level} or lower levels are printed.
+
+@item --stop-level=@var{level}
+@itemx -L @var{level}
+Only elements which are in level @var{level} or higher in element hierarchy are printed.  First level is level number one.  
+
+If both this option and @option{-n, --name} are defined, only names which appear in level @var{level} or higher in element hierarchy are printed.
+
+@item --help
+@itemx -?
+Print an informative help message describing the options and then exit
+successfully.
+
+@item --version
+@itemx -V
+Print the version number of @command{tlve} on the standard output
+and then exit successfully.
+@end table
+All remaining options are names of input files, if no input files
+are specified or '-' is given, then the standard input is read.
+
+@node Configuration, Examples, Invoking tlve, Top
+@chapter Configure tlve
+@cindex configuration
+@command{tlve} uses a text-based configuration file to process and print input data. Default configuration file
+is @file{~/.tlverc}. Configuration is made up of keywords and parameter-value pairs. Comments start with @code{#}-character.
+
+Following chapters explain keywords and their meanings.
+@subheading tl (tag-length)
+@code{tl name=@var{string} tag=@var{type},@var{length},@var{mask},@var{shift},@var{offset} 
+type=@var{type},@var{length},@var{mask},@var{shift},@var{offset}
+length=@var{type},@var{length},@var{mask},@var{shift},@var{offset}
+print=@var{name} value-term=@var{string} tl-included=yes|no type-map=@var{name}}
+@*
+@*
+@code{tl} is used to specify characteristics of tag-length pair, which is used to parse a tlv file. Parameters and their meanings:
+@table @code
+@item name=@var{string}
+Name of this definition, this is used when this definition is referred in other parts of the configuration.
+
+@item tag=@var{type},@var{length},@var{mask},@var{shift},@var{offset}
+Characteristics of tag. Typically a tag is defined by its @var{type} (integer, printable string,...) and its @var{length}.
+@table @code
+@item type
+Can be any of following: 
+@table @code
+@item int
+@itemx int-be
+Signed integer, big endian.
+@item int-le
+Signed integer, little endian.
+@item uint
+@itemx uint-be
+Unsigned integer, big endian.
+@item uint-le
+Unsigned integer, little endian.
+@item string
+Printable string.
+@item ber
+ASN.1 BER encoded tag.
+@end table
+@item length
+The length of the tag as a decimal integer. 
+If the tag and length are separated the separator character can be given in 
+format @var{/c/} where @var{c} is the character separating tag and length.
+@item mask
+An integer tag is and-masked with this value. Mask can be given as decimal or hexadecimal integer. Hexadecimal values
+are given as @code{0xnn}. Value zero will not be used.
+@item shift
+An integer tag is bit shifted using this value. If @code{shift} is positive, 
+tag will be shifted left, if negative tag will be shifted right.
+@item offset
+As default the tag is assumed to be in offset 0 of a tlv triplet. if @code{offset} is given, tag will be read
+from position specified by this offset.
+@end table
+Only the @code{type} and @code{length} or @code{value-term} are mandatory, all other values are optional. 
+
+@item type=@var{type},@var{length},@var{mask},@var{shift},@var{offset}
+If input data contains value encoding information, it can be read using this definition. Input types can be mapped to internal value types using @code{typemap}.
+@table @code
+@item type
+Can be any of following. @strong{Note}: Integers are always read as unsigned.
+@table @code
+@item int
+@itemx int-be
+Signed integer, big endian.
+@item int-le
+Signed integer, little endian.
+@item uint
+Unsigned integer, big endian.
+@item uint-be
+@itemx uint-le
+Unsigned integer, little endian.
+@item string
+Printable string.
+@item ber
+ASN.1 BER encoded length.
+@end table
+@item length
+The length of the type part of a tlv triplet. If the type and the length are separated, 
+the separator character can be given as @var{/c/} where @var{c} is the character separating the type and the length.
+@item mask
+The type is and-masked with this value. Mask can be given as decimal or hexadecimal integer. Hexadecimal values
+are given as @code{0xnn}. Value zero is not used.
+@item shift
+The type it is bit shifted using this value. If @code{shift} is positive, 
+type will be shifted left, if negative type will be shifted right.
+@item offset
+As default the type is assumed to be positioned right after the tag, If this parameter is given type is read using this offset. 
+@strong{Note}: Offset is relative to the beginning of the tlv triplet, not relative to the end of the tag.
+@end table
+Only the @code{type} is mandatory, all other values are optional.
+
+@item length=@var{type},@var{length},@var{mask},@var{shift},@var{offset}
+Characteristics of length. Typically a length is defined by its @var{type} (integer, printable string,...) and its @var{length}.
+@table @code
+@item type
+Can be any of following. @strong{Note}: Integers are always read as unsigned.
+@table @code
+@item int
+@itemx int-be
+Signed integer, big endian.
+@item int-le
+Signed integer, little endian.
+@item uint
+Unsigned integer, big endian.
+@item uint-be
+@itemx uint-le
+Unsigned integer, little endian.
+@item string
+Printable string.
+@item ber
+ASN.1 BER encoded length.
+@end table
+@item length
+The length of the length part of a tlv triplet. If the length and the value are separated, 
+the separator character can be given as @var{/c/} where @var{c} is the character separating the length and value.
+@item mask
+The length is and-masked with this value. Mask can be given as decimal or hexadecimal integer. Hexadecimal values
+are given as @code{0xnn}. Value zero is not used.
+@item shift
+The length it is bit shifted using this value. If @code{shift} is positive, 
+length will be shifted left, if negative length will be shifted right.
+@item offset
+As default the length is assumed to be positioned right after the tag (or type if defined), If this parameter is given length is read using this offset. 
+@strong{Note}: Offset is relative to the beginning of the tlv triplet, not relative to the end of the tag.
+@end table
+Only the @code{type} is mandatory, all other values are optional.
+
+@item print=@var{name}
+Values read using this tag-length definition are printed using printing definition @var{name}.
+
+@item value-term=@var{string} 
+The length will not be used. Instead the value is terminated by @var{string}. @var{string} is not considered as a part of the value. This parameter and @code{length} are mutually exclusive. 
+
+@item tl-included=yes|no
+The tag-length part is included/not included in length. Default is value is no, meaning that the length contains only the length of the value part of tlv triplet.
+@item type-map=@var{name}
+Mapping of input data types to internal types is done using mappings in @code{typemap} definition @var{name}.
+@end table
+
+@subheading typemap
+@code{
+typemap name=@var{string} @*
+map @dots{} @*
+map @dots{} @*
+map @dots{} @*
+. @*
+. @*
+. @*
+typemap-end
+}
+@*
+@*
+@table @code
+@item name=@var{string}
+The name of a typemap. This name is used when referring to this item in other parts of configuration
+@end table
+@code{typemap} is used to map input value types to tlve's internal value types. Input value type can be defined in @code{tl} with keyword @code{type}.
+@code{map} keyword has two parameters:@*@*
+@code{map value=@var{string} @w{value-type=int|int-be|int-le|uint|uint-be|uint-le|string|hex|hexs|dec|bcd|bcds|oid|bit-string|escaped}}
+@table @code
+@item value=@var{string}
+If @var{string} is found as input data type it is mapped to internal value type defined by parameter @var{value-type}.
+@item value-type=int|int-be|int-le|uint|uint-be|uint-le|string|hex|hexs|dec|bcd|bcds|oid|bit-string|escaped
+This value is used in formatting the value for printing. See the meanings of different value types in next chapter.
+@end table
+
+@subheading tlv (tag-length-value)
+@code{tlv name=@var{string} tag=@var{string} end-tag=@var{string}  path=@var{string} type=constructed|primitive|end-of-content
+@w{value-type=int|int-be|int-le|uint|uint-be|uint-le|string|hex|hexs|dec|bcd|bcds|oid|bit-string|escaped}
+content-tl=@var{name} print=@var{name} encoding=@var{name}
+form=definite|indefinite format=@var{string} value-length-adjust=@var{integer} maybe-constructed=yes|no hold=yes|no|@var{name}} 
+@*
+@*
+@code{tlv} is used to specify characteristics of one tlv triplet by mapping additional info to it using the parameter @code{tag} as a key.
+@code{tlv} is only used inside the @code{structure} definition (see below). Parameters and their meanings:
+@table @code
+@item name=@var{string}
+The name of a triplet. This name is used when referring to this item in other parts of configuration or in command line
+(options @option{-n, --name-list} and @option{-e, --espression}). 
+@var{string} is printed using the printing directive @code{%n}.
+@item tag=@var{string}
+@var{string} is used as a key when mapping tlv triplet from input to this definition. ASN.1 BER tags are given in form @code{X-n} where
+@code{X} is the class of tag: U,A,C or P for Universal, Application, Context-specific or Private type of BER-tag. @code{n} is decimal number.
+@item end-tag=@var{string}
+If given, the @var{string} from the parameter @code{tag} and @var{string} from this parameter are considered as value range when mapping 
+tlv triplets to this definition.
+@item path=@var{string}
+Only tlv triplets which have path @var{string} are mapped to this definition. Path is dot separated list of constructor element names or tags
+which are preceding this element in constructor hierarchy. If name is not given for a constructor the tag enclosed in @code{[ ]} is used. If path starts with asterisk (@code{*}) then only the rest of the path must match with the current path.
+@item type=constructed|primitive|end-of-content
+The role of this element in tlv hierarchy. 
+@table @code
+@item constructed
+Element contains one or several other elements, not a single value.
+@item primitive
+Element  contains a single value, this is the default type.
+@item end-of-content
+Elements role is to indicate the end of constructed data. This is normally used when constructor has no given length.
+These elements are not printed.
+@end table
+@item value-type=int|int-be|int-le|uint|uint-be|uint-le|string|hex|hexs|dec|bcd|bcds|oid|bit-string|escaped
+Type of the value. Default is to use value type from @code{typemap} or if that is not used then @code{escaped} is used.
+@table @code
+@item int
+@itemx int-be
+Big endian signed integer.
+@item int-le
+Little endian signed integer.
+@item uint
+@itemx uint-be
+Big endian unsigned integer.
+@item uint-le
+Little endian unsigned integer.
+@item string
+Printable string. 
+@item hex
+Value bytes are printed as hexadecimal numbers.
+@item hexs
+Value bytes are printed  as hexadecimal numbers with half bytes swapped.
+@item dec
+Value bytes are printed as space separated decimal numbers
+@item bcd
+Value contains a bcd number.
+@item bcds
+Value contains a bcd number with half bytes swapped.
+@item oid
+Value contains an ASN.1 object identifier. Sub-identifiers are printed as space separated decimal values. 
+@item bit-string
+Value bits are printed in groups of eight. For non ASN.1 data all bytes are printed. For ASN.1 bit-string
+the first byte contains the number of non printable bits of the last byte and it is not printed.
+@item escaped
+Value is printed as string, except non printable characters are printed as @code{\xnn}, where @code{nn} is the hexadecimal value of a character.
+@end table
+@item content-tl=@var{name}
+Valid for constructor type elements only. tlv triplets inside this constructor are read using tl definition @var{name}.
+This makes it possible to a single file have different tlv encoding in different levels of constructor hierarchy.
+@item print=@var{name}
+Printing is done according printing definition @var{name}.
+@item encoding=@var{name}
+The value part of tlv triplet has encoding @var{name}. Before printing the value (printing directive @code{%v}) the contents
+of the value is converted to system encoding (default) or encoding specified in printing definition. For more information about
+encoding see @w{@samp{man iconv}}.
+@item form=definite|indefinite
+Valid for constructor type elements only:
+@table @code
+@item definite
+Use constructor elements length to detect the end of constructed content.
+@item indefinite
+Constructed element ends when a end-of-content element is found. 
+@end table
+@item format=@var{string}
+@var{string} is a printf-style printing directive for integer values. Integers are handled as 
+@code{long long int} and the default formats are  @code{%lli} and  @code{%llu}.
+If @var{string} starts with @code{+} or @code{++} the rest of the @var{string} is considered as
+format string for @code{strftime()} function and the value is considered to be UNIX time. If single @code{+}
+is given time is formatted as local time, if @code{++} is given the time is formatted as UTC time.
+@item value-length-adjust=@var{integer}
+Before reading the value from input, the length of the value is adjusted as @code{length = length + @var{integer}}.
+@var{integer} can be negative allowing reading less data as expressed by the length in tl data.
+@strong{Note}: length consumed by the tlv triplet is not affected by this parameter.
+@item maybe-constructed=yes|no
+If an element is a primitive type by default and this is set as @code{yes}, then @command{tlve} first checks 
+if the beginning of the value is a valid tl pair and the tl pair's length added to the length expressed 
+by the tl pair matches the total length of this element. If this is true the element is treated as a constructed
+element. Default is @code{no}.
+@item hold=yes|no|@var{name}
+If @code{yes} or @var{name} the value part of a primitive element or the name of a constructed element is put in hold. 
+The value in hold can be printed using notation @code{$}@var{name}, where @var{name} is
+the name of the tlv triplet or an alias name given by @var{name}. Only the latest value encountered is saved. Several
+different elements can share the same alias name.
+This can be used to save the value or the name for later printing. Default is no.
+@end table
+Only parameters @code{name} and @code{tag} are mandatory.
+    
+@subheading structure
+Structure is a multi-line configuration element, which specifies basic characteristics of a tlv input file. 
+Structure can contain multiple @code{tlv} keywords.
+@*
+@code{
+structure name=@var{name} content-tl=@var{name} print=@var{name} filler=@var{string} hex-caps=yes|no @*
+tlv @dots{} @*
+tlv @dots{} @*
+tlv @dots{} @*
+. @*
+. @*
+. @*
+structure-end
+}
+@*
+@*
+@table @code
+@item name=@var{name}
+A name for structure. This is the name which should be given with option @option{-s, --structure}.
+@item content-tl=@var{name}
+A name of a tl definition. tlv triplets are read using this information.
+@item print=@var{name}
+Elements in this structure are printed using printing definition @var{name}, default is to use printing definition named as 'default'. 
+This can be overridden using different names for @code{print} in @code{tl} or @code{tlv} keywords.
+@item filler=@var{string}
+@var{string}s are skipped when reading the input. 
+Non printable characters can be escaped as @code{\xnn}, where @code{nn} is characters hexadecimal value.
+@item hex-caps=yes|no
+if set as @code{yes} then the hexadecimal values are printed in capital letters.
+@end table
+After @code{structure} keyword there can be any number of @code{tlv} keywords, @code{structure} definition is
+ended by @code{structure-end} keyword. Only parameters @code{name} and @code{content-tl} are mandatory.
+
+@subheading print
+Keyword @code{print} specifies how to print tlv triplets in text-based formats.
+@*
+@code{print name=@var{string} file-start=@var{string} file-end=@var{string} constructor=@var{string} 
+constructor-end=@var{string} value=@var{string} indent=@var{string} encoding=@var{name}
+block-start=@var{string} block-end=@var{string} separator=@var{char}}
+@*
+@*
+@table @code
+@item name=@var{string}
+A name for this printing definition. This name can be referred in other parts of the configuration or 
+with option @option{-p, --print}.
+@item file-start=@var{string}
+Output @var{string} for every input file before processing the file.
+@item file-end=@var{string}
+Output @var{string} for every input file after processing the file.
+@item constructor=@var{string}
+@var{string} is printed when a constructor type element is encountered.
+@item constructor-end=@var{string}
+@var{string} is printed after the last element of a constructor type element has been printed.
+@item value=@var{string}
+@var{string} is printed for each primitive tlv triplet
+@item indent=@var{string}
+@var{string} is printed @var{n} times  before any other data.
+@var{n} is the depth of the constructor hierarchy. Default is not to indent.
+@item encoding=@var{name}
+If the value to be printed has a @code{encoding} parameter in @code{tlv}, the @var{name}
+is used as target encoding. Default is to used system encoding (which can be checked by @command{tlve -V}).
+@item block-start=@var{string}
+@var{string} is printed before a group of elements found using expression (@option{-e,--expression}) 
+and/or start level (@option{-l,--start-level}) is printed. @strong{Note}: @var{string} is not printed
+if group of elements found is empty.
+@item block-end=@var{string}
+@var{string} is printed after a group of elements found using expression (@option{-e,--expression})
+and/or start level (@option{-l,--start-level}) is printed. @strong{Note}: @var{string} is not printed
+if group of elements found is empty.
+@item separator=@var{char}
+@var{char} is printed after every primitive element except the last one in a group of elements 
+found using expression (@option{-e,--expression}) and/or start level (@option{-l,--start-level}).
+@end table
+@subsubheading printf-style directives
+@var{string} used in parameters for @code{print} can contain following printf-style directives:
+@table @code
+@item %%
+Print single %.
+@item %$
+Print single $.
+@item %>
+Print the current level of the element hierarchy, first (highest) level is 1.
+@item %l
+Print the length of the value part of the tlv triplet.
+@item %c
+Print the number of bytes consumed by the tlv triplet.
+@item %t
+Print the tag of the tlv triplet.
+@item %n
+Print the name (given by the @code{tlv} keyword) of the tlv triplet. If the tlv triplet cannot be associated with 
+any of the @code{tlv} keywords in @code{structure} definition, then
+the tag enclosed in @code{[ ]} is printed.
+@item %v
+Print the value part of the tlv triplet. Before printing possible character set conversion is performed.
+@item %p
+Current constructor path is printed. @strong{Note}: This is not printed if option @option{-e, --expression} is used.
+@item %o
+Print the current input file offset. Offset is the start of the current tlv triplet.
+@item %O
+Print the total offset calculated for all input files. Offset is the start of the current tlv triplet.
+@item %f
+Print the current file name.
+@item %s
+Print the current structure name.
+@item %d
+Print the hex dump of the tag-length part in format @code{xnnxnn@dots{}}. @code{nn} is the hexadecimal value
+of an octet.
+@item %D
+Print the hex dump of the value part in format @code{xnnxnn@dots{}}. @code{nn} is the hexadecimal value
+of an octet.
+@end table
+@var{string} can also contain following escape codes:
+@code{\a}, @code{\b}, @code{\t}, @code{\n}, @code{\v}, @code{\f}, @code{\r}, @code{\"} and @code{\#}.
+A backslash can be escaped as @code{\\}. If @var{string} contains white-space characters @var{string} must be 
+enclosed in double quotation marks @code{"}.
+Non printable characters can be escaped as @code{\xnn}, where @code{nn} is characters hexadecimal value.
+@subsubheading Hold variables
+If elements is put in "hold" (parameter @var{hold} in tlv-keyword), 
+then the value of a primitive element or the name of a constructed element can be printed in @var{string}s 
+using notation
+@*
+@*
+@code{$}@var{name}
+@*
+@*
+where the @var{name} is the name of the tlv triplet or the alias name. 
+Tlve prints always the latest encountered value or name of the @var{name}. 
+This can be used e.g. to save a value from the beginning of the file to be printed with later found elements.
+@subheading Input Preprocessor
+It is possible to define an input preprosessor for @command{tlve}. An input preprocessor is simply an executable program
+which writes the contents of the input file to standard output which will be read by @command{tlve}. If the input preprosessor
+does not write any characters on its standard output, then @command{tlve} uses the original file.
+
+To set up an input preprocessor, set the @code{TLVEOPEN} environment variable to a command line which will invoke your input preprocessor.
+This command line should include  one  occurrence  of  the string @code{%s}, which will be replaced by the input filename when the input preprocessor command is invoked.
+
+The input preprocessor is not used if @command{tlve} is reading standard input.
+
+Convenient way is to use @command{lesspipe} (or @command{lesspipe.sh}), which is availabe in many UNIX-systems, for example
+@*
+@example
+export TLVEOPEN="/usr/bin/lesspipe %s"
+@end example
+
+Using the example above is it possible to give a zipped input file to @command{tlve}, then the input processor will unzip the file before it is processed by @command{tlve}.
+
+@node Examples, Problems, Configuration, Top
+@chapter How to use tlve
+@cindex example
+Examples of rc-files can be found in @command{tlve} package.
+
+@node Problems, , Examples, Top
+@chapter Reporting Bugs
+@cindex bugs
+@cindex problems
+
+If you find a bug in @command{tlve}, please send electronic mail to
+@email{tjsa@@iki.fi}.  Include the version number, which you can find by
+running @w{@samp{tlve --version}}.  Also include in your message the
+output that the program produced and the output you expected.@refill
+
+If you have other questions, comments or suggestions about
+@command{tlve}, contact the author via electronic mail to
+@email{tjsa@@iki.fi}.  The author will try to help you out, although he
+may not have time to fix your problems.
+
+@contents
+@bye

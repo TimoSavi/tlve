@@ -1,0 +1,79 @@
+body {
+	margin: 1%;
+	padding: 0 5%;
+	background: white;
+	font-family: serif;
+	text-align: justify;
+}
+
+h1,h2,h3,h4,h5 {
+    padding: 0.5em 0 0 0;
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+h1 {
+    padding: 0.5em 0 0.5em 1em;
+    color: inherit;
+    background: #578;
+}
+
+pre {
+  margin: 0;
+  padding: 0.5em 0.5em 0.5em 0;
+}
+
+pre.example {
+  padding: 0;
+  margin: 0;
+  background: #eee;
+}
+
+pre.verbatim, .menu {
+  border: solid 1px gray;
+  background: inherit;
+  padding-bottom: 1em;
+}
+
+div.node {
+  background: #ccc;
+  margin: 0;
+  padding: 0 1.5em;
+  font-weight: lighter;
+  color: #000;
+  text-align: right;
+}
+
+.node a {
+  color: #770000;
+}
+
+.node a:visited {
+  color: #550000;
+}
+
+dd, li {
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+}
+
+samp {
+	font: inherit;
+}
+
+code {
+	font-size: inherit;
+    font-weight: bold;
+}
+
+pre, code { 
+	font-family: monospace;
+}
+
+.command, .file {
+   font-family: monospace;
+} 
+
+div.node hr {
+    display:none;
+}

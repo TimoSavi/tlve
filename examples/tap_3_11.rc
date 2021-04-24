@@ -1,0 +1,329 @@
+# Example file for reading GSM Association's TAP 3 files
+# Names of the elements are according TD.57 version 3.11.05
+#
+# Try this:
+# Just print the file contents:
+# $tlve -c tap_3_11.rc -s tap311 <input files>
+ 
+# search for calls with a particular imsi:
+# $tlve -c tap_3_11.rc -s tap311 -l 3 -e imsi=123456789012345 <input files>
+# use -l 3 to print whole calls, without -l 3 tlve prints only imsis. Call information starts from level 3.
+
+# Print the file contents with tag and value dumps:
+# $tlve -c tap_3_11.rc -s tap311 -p dump <input files>
+
+# Print imsi and msisdn for imsis which start with 12345 in csv format, use -l3 to make a block for every
+# call and use printing keyword block-end to print a newline after every call
+# Note that the Sender is also printed, because it is put in "hold" and printed using
+# the sender print definition
+# $tlve -c tap_3_11.rc -s tap311 -l3 -e imsi=^12345 -n imsi,msisdn -p sender <input files>
+
+# Print imsi and msisdn for all calls and also print the sender and the call type. 
+# Sender and call type are printed using hold variables
+# $tlve -c tap_3_11.rc -s tap311 -l3 -n imsi,msisdn -p call <input files>
+
+tl name=ber tag=ber length=ber
+
+structure name=tap311 content-tl=ber hex-caps=yes
+tlv name=TransferBatch tag=A-1 
+tlv name=Notification tag=A-2 
+tlv name=CallEventDetailList tag=A-3 
+tlv name=BatchControlInfo tag=A-4 
+tlv name=AccountingInfo tag=A-5 
+tlv name=NetworkInfo tag=A-6 
+tlv name=MessageDescriptionInfoList tag=A-8 
+tlv name=MobileOriginatedCall tag=A-9 hold=Call
+tlv name=MobileTerminatedCall tag=A-10 hold=Call
+tlv name=SupplServiceEvent tag=A-11 hold=Call
+tlv name=ServiceCentreUsage tag=A-12 hold=Call
+tlv name=GprsCall tag=A-14 hold=Call
+tlv name=ContentTransaction tag=A-17 hold=Call 
+tlv name=LocationService tag=A-297 hold=Call
+tlv name=AuditControlInfo tag=A-15 
+tlv name=AccessPointNameNI tag=A-261 
+tlv name=AccessPointNameOI tag=A-262 
+tlv name=ActualDeliveryTimeStamp tag=A-302 
+tlv name=AdvisedCharge tag=A-349 value-type=int
+tlv name=AdvisedChargeCurrency tag=A-348 
+tlv name=AdvisedChargeInformation tag=A-351 
+tlv name=AgeOfLocation tag=A-396 value-type=int
+tlv name=BasicService tag=A-36 
+tlv name=BasicServiceCode tag=A-426 value-type=int
+tlv name=BasicServiceCodeList tag=A-37 
+tlv name=BasicServiceUsed tag=A-39 
+tlv name=BasicServiceUsedList tag=A-38 
+tlv name=BearerServiceCode tag=A-40 
+tlv name=CalledNumber tag=A-407 value-type=bcd
+tlv name=CalledPlace tag=A-42 
+tlv name=CalledRegion tag=A-46 
+tlv name=CallEventDetailsCount tag=A-43 value-type=int
+tlv name=CallEventStartTimeStamp tag=A-44 
+tlv name=CallingNumber tag=A-405 value-type=bcd
+tlv name=CallOriginator tag=A-41 
+tlv name=CallReference tag=A-45 value-type=int
+tlv name=CallTypeGroup tag=A-258 
+tlv name=CallTypeLevel1 tag=A-259 value-type=int
+tlv name=CallTypeLevel2 tag=A-255 value-type=int
+tlv name=CallTypeLevel3 tag=A-256 value-type=int
+tlv name=CamelDestinationNumber tag=A-404 value-type=bcd
+tlv name=CamelInvocationFee tag=A-422 value-type=int
+tlv name=CamelServiceKey tag=A-55 value-type=int
+tlv name=CamelServiceLevel tag=A-56 value-type=int
+tlv name=CamelServiceUsed tag=A-57 
+tlv name=CauseForTerm tag=A-58 value-type=int
+tlv name=CellId tag=A-59 value-type=int
+tlv name=Charge tag=A-62 value-type=int
+tlv name=ChargeableSubscriber tag=A-427 
+tlv name=ChargeableUnits tag=A-65 value-type=int
+tlv name=ChargeDetail tag=A-63 
+tlv name=ChargeDetailList tag=A-64 
+tlv name=ChargeDetailTimeStamp tag=A-410 
+tlv name=ChargedItem tag=A-66 
+tlv name=ChargedPartyEquipment tag=A-323 
+tlv name=ChargedPartyHomeIdentification tag=A-313 
+tlv name=ChargedPartyHomeIdList tag=A-314 
+tlv name=ChargedPartyIdentification tag=A-309 
+tlv name=ChargedPartyIdentifier tag=A-287 
+tlv name=ChargedPartyIdList tag=A-310 
+tlv name=ChargedPartyIdType tag=A-305 value-type=int
+tlv name=ChargedPartyInformation tag=A-324 
+tlv name=ChargedPartyLocation tag=A-320 
+tlv name=ChargedPartyLocationList tag=A-321 
+tlv name=ChargedPartyStatus tag=A-67 value-type=int
+tlv name=ChargedUnits tag=A-68 value-type=int
+tlv name=ChargeInformation tag=A-69 
+tlv name=ChargeInformationList tag=A-70 
+tlv name=ChargeRefundIndicator tag=A-344 value-type=int
+tlv name=ChargeType tag=A-71 
+tlv name=ChargingId tag=A-72 value-type=hex
+tlv name=ChargingPoint tag=A-73 
+tlv name=ChargingTimeStamp tag=A-74 
+tlv name=ClirIndicator tag=A-75 value-type=int
+tlv name=Commission tag=A-350 value-type=int
+tlv name=CompletionTimeStamp tag=A-76 
+tlv name=ContentChargingPoint tag=A-345 value-type=int
+tlv name=ContentProvider tag=A-327 
+tlv name=ContentProviderIdentifier tag=A-292 
+tlv name=ContentProviderIdList tag=A-328 
+tlv name=ContentProviderIdType tag=A-291 value-type=int
+tlv name=ContentProviderName tag=A-334 
+tlv name=ContentServiceUsed tag=A-352 
+tlv name=ContentServiceUsedList tag=A-285 
+tlv name=ContentTransactionBasicInfo tag=A-304 
+tlv name=ContentTransactionCode tag=A-336 value-type=int
+tlv name=ContentTransactionType tag=A-337 value-type=int
+tlv name=CseInformation tag=A-79 value-type=hex
+tlv name=CurrencyConversion tag=A-106 
+tlv name=CurrencyConversionList tag=A-80 
+tlv name=CustomerIdentifier tag=A-364 
+tlv name=CustomerIdType tag=A-363 value-type=int
+tlv name=DataVolumeIncoming tag=A-250 value-type=int
+tlv name=DataVolumeOutgoing tag=A-251 value-type=int
+tlv name=DefaultCallHandlingIndicator tag=A-87 value-type=int
+tlv name=DepositTimeStamp tag=A-88 
+tlv name=Destination tag=A-89 
+tlv name=DestinationNetwork tag=A-90 
+tlv name=DialledDigits tag=A-279 
+tlv name=Discount tag=A-412 
+tlv name=DiscountableAmount tag=A-423 value-type=int
+tlv name=DiscountApplied tag=A-428 
+tlv name=DiscountCode tag=A-91 value-type=int
+tlv name=DiscountInformation tag=A-96 
+tlv name=Discounting tag=A-94 
+tlv name=DiscountingList tag=A-95 
+tlv name=DiscountRate tag=A-92 value-type=int
+tlv name=DistanceChargeBandCode tag=A-98 
+tlv name=EarliestCallTimeStamp tag=A-101 
+tlv name=EquipmentId tag=A-290 
+tlv name=EquipmentIdType tag=A-322 value-type=int
+tlv name=Esn tag=A-103 
+tlv name=ExchangeRate tag=A-104 value-type=int
+tlv name=ExchangeRateCode tag=A-105 value-type=int
+tlv name=FileAvailableTimeStamp tag=A-107 
+tlv name=FileCreationTimeStamp tag=A-108 
+tlv name=FileSequenceNumber tag=A-109 
+tlv name=FileTypeIndicator tag=A-110 
+tlv name=FixedDiscountValue tag=A-411 value-type=int
+tlv name=Fnur tag=A-111 value-type=int
+tlv name=GeographicalLocation tag=A-113 
+tlv name=GprsBasicCallInformation tag=A-114 
+tlv name=GprsChargeableSubscriber tag=A-115 
+tlv name=GprsDestination tag=A-116 
+tlv name=GprsLocationInformation tag=A-117 
+tlv name=GprsNetworkLocation tag=A-118 
+tlv name=GprsServiceUsed tag=A-121 
+tlv name=GsmChargeableSubscriber tag=A-286 
+tlv name=GuaranteedBitRate tag=A-420 value-type=int
+tlv name=HomeBid tag=A-122 
+tlv name=HomeIdentifier tag=A-288 
+tlv name=HomeIdType tag=A-311 value-type=int
+tlv name=HomeLocationDescription tag=A-413 
+tlv name=HomeLocationInformation tag=A-123 
+tlv name=HorizontalAccuracyDelivered tag=A-392 value-type=int
+tlv name=HorizontalAccuracyRequested tag=A-385 value-type=int
+tlv name=HSCSDIndicator tag=A-424 
+tlv name=Imei tag=A-128 value-type=bcd
+tlv name=ImeiOrEsn tag=A-429 
+tlv name=Imsi tag=A-129 value-type=bcd
+tlv name=IMSSignallingContext tag=A-418 value-type=int
+tlv name=InternetServiceProvider tag=A-329 
+tlv name=InternetServiceProviderIdList tag=A-330 
+tlv name=IspIdentifier tag=A-294 
+tlv name=IspIdType tag=A-293 value-type=int
+tlv name=ISPList tag=A-378 
+tlv name=NetworkIdType tag=A-331 value-type=int
+tlv name=NetworkIdentifier tag=A-295 
+tlv name=Network tag=A-332 
+tlv name=NetworkList tag=A-333 
+tlv name=LatestCallTimeStamp tag=A-133 
+tlv name=LCSQosDelivered tag=A-390 
+tlv name=LCSQosRequested tag=A-383 
+tlv name=LCSRequestTimestamp tag=A-384 
+tlv name=LCSSPIdentification tag=A-375 
+tlv name=LCSSPIdentificationList tag=A-374 
+tlv name=LCSSPInformation tag=A-373 
+tlv name=LCSTransactionStatus tag=A-391 value-type=int
+tlv name=LocalCurrency tag=A-135 
+tlv name=LocalTimeStamp tag=A-16 
+tlv name=LocationArea tag=A-136 value-type=int
+tlv name=LocationIdentifier tag=A-289 
+tlv name=LocationIdType tag=A-315 value-type=int
+tlv name=LocationInformation tag=A-138 
+tlv name=LocationServiceUsage tag=A-382 
+tlv name=MaximumBitRate tag=A-421 value-type=int
+tlv name=Mdn tag=A-253 
+tlv name=MessageDescription tag=A-142 
+tlv name=MessageDescriptionCode tag=A-141 value-type=int
+tlv name=MessageDescriptionInformation tag=A-143 
+tlv name=MessageStatus tag=A-144 value-type=int
+tlv name=MessageType tag=A-145 value-type=int
+tlv name=Min tag=A-146 
+tlv name=MinChargeableSubscriber tag=A-254 
+tlv name=MoBasicCallInformation tag=A-147 
+tlv name=Msisdn tag=A-152 value-type=bcd
+tlv name=MtBasicCallInformation tag=A-153 
+tlv name=NetworkAccessIdentifier tag=A-417 
+tlv name=NetworkInitPDPContext tag=A-245 value-type=int
+tlv name=NetworkLocation tag=A-156 
+tlv name=NonChargedNumber tag=A-402 
+tlv name=NumberOfDecimalPlaces tag=A-159 value-type=int
+tlv name=ObjectType tag=A-281 value-type=int
+tlv name=OperatorSpecInfoList tag=A-162 
+tlv name=OperatorSpecInformation tag=A-163 
+tlv name=OrderPlacedTimeStamp tag=A-300 
+tlv name=OriginatingNetwork tag=A-164 
+tlv name=PacketDataProtocolAddress tag=A-165 
+tlv name=PaidIndicator tag=A-346 value-type=int
+tlv name=PartialTypeIndicator tag=A-166 
+tlv name=PaymentMethod tag=A-347 value-type=int
+tlv name=PdpAddress tag=A-167 
+tlv name=PDPContextStartTimestamp tag=A-260 
+tlv name=PlmnId tag=A-169 
+tlv name=PositioningMethod tag=A-395 value-type=int
+tlv name=PriorityCode tag=A-170 value-type=int 
+tlv name=RapFileSequenceNumber tag=A-181 
+tlv name=RecEntityCode tag=A-184 value-type=int
+tlv name=RecEntityCodeList tag=A-185 
+tlv name=RecEntityId tag=A-400 
+tlv name=RecEntityInfoList tag=A-188 
+tlv name=RecEntityInformation tag=A-183 
+tlv name=RecEntityType tag=A-186 value-type=int
+tlv name=Recipient tag=A-182 
+tlv name=ReleaseVersionNumber tag=A-189 value-type=int
+tlv name=RequestedDeliveryTimeStamp tag=A-301 
+tlv name=ResponseTime tag=A-394 value-type=int
+tlv name=ResponseTimeCategory tag=A-387 value-type=int
+tlv name=ScuBasicInformation tag=A-191 
+tlv name=ScuChargeType tag=A-192 
+tlv name=ScuTimeStamps tag=A-193 
+tlv name=ScuChargeableSubscriber tag=A-430 
+tlv name=Sender tag=A-196 hold=yes
+tlv name=ServingBid tag=A-198 
+tlv name=ServingLocationDescription tag=A-414 
+tlv name=ServingNetwork tag=A-195 
+tlv name=ServingPartiesInformation tag=A-335 
+tlv name=SimChargeableSubscriber tag=A-199 
+tlv name=SimToolkitIndicator tag=A-200 
+tlv name=SMSDestinationNumber tag=A-419 
+tlv name=SMSOriginator tag=A-425 
+tlv name=SpecificationVersionNumber tag=A-201 value-type=int
+tlv name=SsParameters tag=A-204 
+tlv name=SupplServiceActionCode tag=A-208 value-type=int
+tlv name=SupplServiceCode tag=A-209 
+tlv name=SupplServiceUsed tag=A-206 
+tlv name=TapCurrency tag=A-210 
+tlv name=TapDecimalPlaces tag=A-244 value-type=int
+tlv name=TaxableAmount tag=A-398 value-type=int
+tlv name=Taxation tag=A-216 
+tlv name=TaxationList tag=A-211 
+tlv name=TaxCode tag=A-212 value-type=int
+tlv name=TaxInformation tag=A-213 
+tlv name=TaxInformationList tag=A-214 
+tlv name=TaxRate tag=A-215 
+tlv name=TaxType tag=A-217 
+tlv name=TaxValue tag=A-397 value-type=int
+tlv name=TeleServiceCode tag=A-218 
+tlv name=ThirdPartyInformation tag=A-219 
+tlv name=ThirdPartyNumber tag=A-403 
+tlv name=ThreeGcamelDestination tag=A-431 
+tlv name=TotalAdvisedCharge tag=A-356 value-type=int
+tlv name=TotalAdvisedChargeRefund tag=A-357 value-type=int
+tlv name=TotalAdvisedChargeValue tag=A-360 
+tlv name=TotalAdvisedChargeValueList tag=A-361 
+tlv name=TotalCallEventDuration tag=A-223 value-type=int
+tlv name=TotalCharge tag=A-415 value-type=int
+tlv name=TotalChargeRefund tag=A-355 value-type=int
+tlv name=TotalCommission tag=A-358 value-type=int
+tlv name=TotalCommissionRefund tag=A-359 value-type=int
+tlv name=TotalDataVolume tag=A-343 value-type=int
+tlv name=TotalDiscountRefund tag=A-354 value-type=int
+tlv name=TotalDiscountValue tag=A-225 value-type=int
+tlv name=TotalTaxRefund tag=A-353 value-type=int
+tlv name=TotalTaxValue tag=A-226 value-type=int
+tlv name=TotalTransactionDuration tag=A-416 value-type=int
+tlv name=TrackedCustomerEquipment tag=A-381 
+tlv name=TrackedCustomerHomeId tag=A-377 
+tlv name=TrackedCustomerHomeIdList tag=A-376 
+tlv name=TrackedCustomerIdentification tag=A-372 
+tlv name=TrackedCustomerIdList tag=A-370 
+tlv name=TrackedCustomerInformation tag=A-367 
+tlv name=TrackedCustomerLocation tag=A-380 
+tlv name=TrackedCustomerLocList tag=A-379 
+tlv name=TrackingCustomerEquipment tag=A-371 
+tlv name=TrackingCustomerHomeId tag=A-366 
+tlv name=TrackingCustomerHomeIdList tag=A-365 
+tlv name=TrackingCustomerIdentification tag=A-362 
+tlv name=TrackingCustomerIdList tag=A-299 
+tlv name=TrackingCustomerInformation tag=A-298 
+tlv name=TrackingCustomerLocation tag=A-369 
+tlv name=TrackingCustomerLocList tag=A-368 
+tlv name=TrackingFrequency tag=A-389 value-type=int
+tlv name=TrackingPeriod tag=A-388 value-type=int
+tlv name=TransactionAuthCode tag=A-342 
+tlv name=TransactionDescriptionSupp tag=A-338 value-type=int
+tlv name=TransactionDetailDescription tag=A-339 
+tlv name=TransactionIdentifier tag=A-341 
+tlv name=TransactionShortDescription tag=A-340 
+tlv name=TransactionStatus tag=A-303 value-type=int
+tlv name=TransferCutOffTimeStamp tag=A-227 
+tlv name=TransparencyIndicator tag=A-228 value-type=int
+tlv name=UserProtocolIndicator tag=A-280 value-type=int
+tlv name=UtcTimeOffset tag=A-231 
+tlv name=UtcTimeOffsetCode tag=A-232 value-type=int
+tlv name=UtcTimeOffsetInfo tag=A-233 
+tlv name=UtcTimeOffsetInfoList tag=A-234 
+tlv name=VerticalAccuracyDelivered tag=A-393 value-type=int
+tlv name=VerticalAccuracyRequested tag=A-386 value-type=int
+structure-end
+
+print name=default value="%n = <%v>\n" constructor="%n \n{\n" constructor-end="}\n" indent="  "\
+file-start="\n------- %f ---------\n\n"
+
+print name=dump value="%n = <%v> %l (%d)(%D)\n" constructor="%n (%o,%l) (%d)\n{\n" constructor-end="}\n" indent="  "\
+file-start="\n------- %f ---------\n\n"
+
+print name=csv value="%v" separator=, block-end="\n" indent=""
+
+print name=sender block-start="$Sender," value="%v" separator=, block-end="\n" indent=""
+
+print name=call block-start="$Sender,$Call," value="%v" separator=, block-end="\n" indent=""

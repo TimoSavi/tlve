@@ -1,0 +1,51 @@
+# ASN.1 ber example configuration.
+# This file is for reading any ASN.1 BER encoded file, this
+# example contains names only for Universal class tags, add your
+# own tags using tlv-keyword
+
+#  test this by command:
+#  tlve -c ber.rc -s BER <inputfile>
+# or
+#  tlve -c ber.rc -s BER -p dump <inputfile>
+
+tl name=asn1ber tag=ber length=ber
+
+structure name=BER content-tl=asn1ber
+tlv name=Boolean tag="U-1" value-type=uint
+tlv name=Integer tag="U-2" value-type=int
+tlv name=BitString tag="U-3" maybe-constructed=yes  value-type=bit-string
+tlv name=OctetString tag="U-4" maybe-constructed=yes value-type=hex
+tlv name=NULL tag="U-5" value-type=hex
+tlv name=ObjectIdentifier tag="U-6" value-type=oid
+tlv name=ObjectDescriptor tag="U-7" value-type=hex
+tlv name=External tag="U-8" 
+tlv name=Real tag="U-9" value-type=hex
+tlv name=Enumerated tag="U-10" value-type=int
+tlv name=EmbeddedPvd tag="U-11" value-type=hex
+tlv name=UTF8String tag="U-12" maybe-constructed=yes value-type=string encoding=UTF8
+tlv name=RelativeOid tag="U-13" value-type=hex
+tlv name=Sequence tag="U-16" 
+tlv name=Set tag="U-17" 
+tlv name=NumericString tag="U-18" value-type=string 
+tlv name=PrintableString tag="U-19" value-type=string 
+tlv name=T61String tag="U-20" value-type=string 
+tlv name=VideotexString tag="U-21" value-type=string 
+tlv name=IA5String tag="U-22" value-type=string encoding=ISO646-FI    # change encoding to suit your needs
+tlv name=UTCTime tag="U-23" value-type=string 
+tlv name=GeneralizedTime tag="U-24" value-type=string 
+tlv name=GraphicString tag="U-25" value-type=string 
+tlv name=VisibleString tag="U-26" value-type=string 
+tlv name=GeneralString tag="U-27" value-type=string 
+tlv name=UniversalString tag="U-28" value-type=string 
+tlv name=CharacterString tag="U-29" value-type=string 
+tlv name=BMPString tag="U-30" value-type=string encoding=UCS-4
+structure-end
+
+# printing definitions
+# XML produced using this may not be well formed
+print name=XML file-start="<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" \
+      value="<%n>%v</%n>\n" constructor="<%n>\n" constructor-end="</%n>\n" encoding="ISO-8859-1" indent="  "
+
+print name=default file-start="--- File: %f ---\n\n" value="%n=%v\n" constructor="%n {\n" constructor-end="}\n" indent="  "
+
+print name=dump file-start="--- File: %f ---\n\n" value="%n=%v (tag: %d, value %D)\n" constructor="%n (tag: %d){\n" constructor-end="}\n" indent="  "

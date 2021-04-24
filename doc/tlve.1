@@ -1,0 +1,86 @@
+.\" hey, Emacs:   -*- nroff -*-
+.\" tlve is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\" 
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\" 
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; see the file COPYING.  If not, write to
+.\" the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+.\" 
+.\" Please update the above date whenever this man page is modified.
+.\" 
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins (default)
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.TH "TLVE" "1" "2013" "Timo Savinen" ""
+.SH "NAME"
+tlve
+.SH "SYNOPSIS"
+.B tlve
+.RI [ options ]... 
+.RI [ file ]...
+.SH "DESCRIPTION"
+\fBtlve\fP parses different tag\-length\-value structures and prints them in various text\-based formats.
+.SH "OPTIONS"
+\fBtlve\fP accepts the following options:
+.TP 
+.B \-c, " \-\-configuration \fIname\fR"
+Read configuration from \fIname\fR instead of ~/.tlverc.
+.TP 
+.B \-d, \-\-debug
+Dump unprocessable data to tlve.debug.
+.TP 
+.B \-n, " \-\-name\-list \fIlist\fR"
+Print only elements having name or tag in comma separated list \fIlist\fR.
+.TP 
+.B \-s, " \-\-structure \fIname\fR"
+Use structure \fIname\fR to process the input data.
+.TP 
+.B \-e, " \-\-expression \fIname\fR=\fIvalue\fR"
+Print only elements for which the expression \fIname\fR=\fIvalue\fR evaluates true.
+.TP 
+.B \-a, \-\-and
+All expressions must evaluate true.
+.TP 
+.B \-p, " \-\-print \fIname\fR"
+Use printing definition \fIname\fR to print the data.
+.TP 
+.B \-o, " \-\-output \fIname\fR"
+Write output to \fIname\fR instead of standard output.
+.TP 
+.B \-l, " \-\-start\-level \fIlevel\fR"
+Print only levels starting from \fIlevel\fR in element hierarchy, first level is 1.
+.TP 
+.B \-L, " \-\-stop\-level \fIlevel\fR"
+Print only levels to \fIlevel\fR in element hierarchy, first level is 1.
+.TP 
+.B \-h, \-\-help
+Show summary of options.
+.TP 
+.B \-V, \-\-version
+Show version of program.
+.\"
+.SH "SEE ALSO"
+.LP 
+The full documentation for tlve is maintained as a Texinfo manual. If the \fBinfo\fR and \fBtlve\fR are properly installed, the command
+.sp 3
+       \fBinfo\fR \fBtlve\fR
+.sp 3
+should give more information. 
+.LP 
+The manual is also available in HTML format in the \fBtlve\fR package.
+.SH "AUTHOR"
+Timo Savinen <tjsa@iki.fi>.

@@ -1,0 +1,19 @@
+# Example of binary coded tlv file where tag and length are both
+# unsigned integers with length of two octets.
+#
+# tags from 1000 to 1999 are constructed elements and tag 4079 is constructed element with ASN.1 ber encoded contents
+# all other tags are printed as hex values
+#
+# test this with command:
+# tlve -c binary.rc -s bin <input file>
+
+tl name=ber tag=ber length=ber
+tl name=CDB tag=uint,2 length=uint,2
+
+structure name=bin content-tl=CDB
+tlv name=block tag=1000 end-tag=1999 type=constructed
+tlv name="BER block" tag=4079 type=constructed content-tl=ber
+tlv name=Value tag=2000 end-tag=9999 value-type=hex
+structure-end
+
+print name=default value="[%t] = <%v>\n" constructor="%n\n{\n" constructor-end="}\n" indent="  "
