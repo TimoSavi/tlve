@@ -7,7 +7,7 @@ GNU autotools and gcc are required to build tlve.
 
 Clone from github and then:
 
-    cd ceif
+    cd tlve
     autoreconf -is
     ./configure
     make
