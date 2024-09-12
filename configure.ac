@@ -1,12 +1,12 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([tlve], [2.3], [tjsa@iki.fi])
+AC_INIT([tlve],[2.3-24],[tjsa@iki.fi])
 AC_CONFIG_SRCDIR([src/tlve.c])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([config])
-AC_GNU_SOURCE
-AM_INIT_AUTOMAKE([foreign])
+AC_USE_SYSTEM_EXTENSIONS
+AM_INIT_AUTOMAKE([foreign tar-pax])
 
 AC_SUBST([VERSION])
 ISODATE=`date +%Y-%m-%d`

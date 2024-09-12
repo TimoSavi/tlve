@@ -1,3 +1,8 @@
+2024-09-12  Timo Savinen  <tjsa@iki.fi>
+    * Version 2.3-24
+    * Updated configure.ac to be compatible with current environments
+    * Run make distcheck
+
 2016-06-30  Timo Savinen  <tjsa@iki.fi>
     * Version 2.3
     * If integer value does not fit to C data type, then value is printed as hex value.
