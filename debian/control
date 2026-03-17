@@ -1,0 +1,16 @@
+Source: tlve
+Section: misc
+Priority: optional
+Maintainer: Martin Christian <martin@christianix.de>
+Build-Depends: debhelper-compat (= 13), dh-autoreconf
+Standards-Version: 4.5.0
+Homepage: https://github.com/TimoSavi/tlve
+
+Package: tlve
+Architecture: any
+Multi-Arch: foreign
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: tlve is a command-line tool to parse and print different tag-length-value structures.
+  tlve can parse text or binary (including ASN.1 BER) tlv structures. Tag,
+  length and value can have fixed length or separated format. Values can be
+  presented in different formats and converted to different encoding.
