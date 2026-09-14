@@ -32,7 +32,7 @@ AC_SEARCH_LIBS(libiconv_open, iconv)
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([ctype.h fcntl.h features.h error.h errno.h getopt.h regex.h langinfo.h time.h libintl.h locale.h sys/time.h iconv.h signal.h])
+AC_CHECK_HEADERS([ctype.h fcntl.h features.h error.h errno.h getopt.h regex.h langinfo.h time.h libintl.h locale.h sys/time.h iconv.h signal.h sys/mman.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
@@ -49,9 +49,10 @@ AC_STRUCT_TM
 # Checks for library functions.
 AC_FUNC_STRFTIME
 AC_FUNC_FORK
+AC_FUNC_MMAP
 AC_CHECK_FUNCS([setmode strcasecmp strncasecmp strchr sigaction])  
 AC_CHECK_FUNCS([strdup strerror strstr getline getopt_long regcomp setlocale nl_langinfo])  
-AC_CHECK_FUNCS([strtoll strtoull atoll iconv_open dup2 pipe])  
+AC_CHECK_FUNCS([strtoll strtoull atoll iconv_open dup2 pipe munmap madvise])  
 
 AC_CONFIG_FILES([Makefile
                  doc/Makefile

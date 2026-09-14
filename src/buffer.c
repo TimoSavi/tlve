@@ -18,6 +18,11 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  
 */ 
 #include "tlve.h"
+#include <sys/stat.h>
+#if defined(HAVE_SYS_MMAN_H) && defined(HAVE_MMAP)
+#include <sys/mman.h>
+#define USE_MMAP 1
+#endif
 #if defined(HAVE_WORKING_FORK) && defined(HAVE_DUP2) && defined(HAVE_PIPE)
 #include <sys/wait.h>
 #endif
@@ -26,9 +31,12 @@
 /* input buffer size, this dictates etc. the maximum tlv triplet size */
 #define BUFFER_SIZE ((size_t) 10485760)
 
+/* Stream input buffer (used for pipes, stdin, or non-mmap files) */
+static BUFFER *stream_buffer = NULL;
+
 /* Pointers to different points in buffer */
 /* Start of the buffer */
-static BUFFER *buffer_start;
+static BUFFER *buffer_start = NULL;
 
 /* Low water, point after the flush command reads new data and makes buffer stale */
 static BUFFER *low_water;
@@ -54,6 +62,8 @@ struct input_file
     char *name;
     FILE_OFFSET offset;
     FILE *fp;
+    size_t file_size;
+    BUFFER *mmap_addr;
 #if defined(HAVE_WORKING_FORK) && defined(HAVE_DUP2) && defined(HAVE_PIPE)
     pid_t pid;
 #endif
@@ -92,6 +102,8 @@ set_input_file(char *name)
     f->offset = (FILE_OFFSET) 0;
     f->name = xstrdup(name);
     f->fp = NULL;
+    f->file_size = 0;
+    f->mmap_addr = NULL;
 #if defined(HAVE_WORKING_FORK) && defined(HAVE_DUP2) && defined(HAVE_PIPE)
     f->pid = (pid_t) 0;
 #endif
@@ -163,6 +175,14 @@ static void
 close_input_file(struct input_file *f)
 {
     if(f == NULL) return;
+#ifdef USE_MMAP
+    if(f->mmap_addr != NULL)
+    {
+        munmap(f->mmap_addr, f->file_size);
+        f->mmap_addr = NULL;
+        f->file_size = 0;
+    }
+#endif
     if(f->fp != NULL)
     {
         if(f->fp != stdin) fclose(f->fp);
@@ -242,6 +262,29 @@ open_next_input_file()
 #endif
         }
         if(current_file->fp == NULL) current_file->fp = xfopen(current_file->name,"r",'b');
+#ifdef USE_MMAP
+        if(current_file->fp != NULL && current_file->fp != stdin
+#if defined(HAVE_WORKING_FORK) && defined(HAVE_DUP2) && defined(HAVE_PIPE)
+           && current_file->pid == (pid_t) 0
+#endif
+          )
+        {
+            int fd = fileno(current_file->fp);
+            struct stat st;
+            if(fd >= 0 && fstat(fd, &st) == 0 && S_ISREG(st.st_mode) && st.st_size > 0)
+            {
+                void *addr = mmap(NULL, (size_t) st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+                if(addr != MAP_FAILED)
+                {
+#if defined(HAVE_MADVISE) && defined(MADV_SEQUENTIAL)
+                    madvise(addr, (size_t) st.st_size, MADV_SEQUENTIAL);
+#endif
+                    current_file->mmap_addr = (BUFFER *) addr;
+                    current_file->file_size = (size_t) st.st_size;
+                }
+            }
+        }
+#endif
     }
     return 1;
 }
@@ -278,6 +321,9 @@ void
 flush_buffer()
 {
     size_t tomove;
+#ifdef USE_MMAP
+    if(current_file != NULL && current_file->mmap_addr != NULL) return;
+#endif
     if(buffer_start == new_data) return;
     if(data_end < buffer_end) return;
 
@@ -323,12 +369,25 @@ buffer(int command, size_t size)
     switch(command)
     {
         case B_INIT:
-            if(buffer_start == NULL) 
+#ifdef USE_MMAP
+            if(current_file != NULL && current_file->mmap_addr != NULL)
             {
-                buffer_start = xmalloc(BUFFER_SIZE);
-                buffer_end = buffer_start + BUFFER_SIZE;
-                low_water = buffer_end - (BUFFER_SIZE >> 3);    // low water is bufferSize/8 before end
+                buffer_start = current_file->mmap_addr;
+                buffer_end = buffer_start + current_file->file_size;
+                data_end = buffer_end;
+                low_water = buffer_end;
+                new_data = buffer_start;
+                buffer_state = S_BUFFER_OK;
+                return 1;
             }
+#endif
+            if(stream_buffer == NULL) 
+            {
+                stream_buffer = xmalloc(BUFFER_SIZE);
+            }
+            buffer_start = stream_buffer;
+            buffer_end = buffer_start + BUFFER_SIZE;
+            low_water = buffer_end - (BUFFER_SIZE >> 3);    // low water is bufferSize/8 before end
 
             data_end = buffer_start + uc_fread(buffer_start,(size_t) 1,BUFFER_SIZE,current_file->fp);
             buffer_state = S_BUFFER_OK; 
@@ -465,6 +524,9 @@ buffer_unread()
 int
 is_file_read()
 {
+#ifdef USE_MMAP
+    if(current_file != NULL && current_file->mmap_addr != NULL) return 1;
+#endif
     return (data_end < buffer_end);
 }
 
@@ -589,12 +651,13 @@ free_input_files()
 void
 free_buffer()
 {
-    if(buffer_start != NULL)
+    if(stream_buffer != NULL)
     {
-        free(buffer_start);
-        buffer_start = NULL;
-        buffer_end = NULL;
-        data_end = NULL;
-        new_data = NULL;
+        free(stream_buffer);
+        stream_buffer = NULL;
     }
+    buffer_start = NULL;
+    buffer_end = NULL;
+    data_end = NULL;
+    new_data = NULL;
 }
