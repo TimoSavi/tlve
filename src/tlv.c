@@ -191,6 +191,36 @@ consumed_bo(struct bo *bo, size_t offset)
 }
 
 
+static inline long long int
+safe_shift_ll(long long int val, int shift)
+{
+    if(shift == 0) return val;
+    if(shift > 0)
+    {
+        if(shift >= 64) return 0;
+        return val << shift;
+    } else
+    {
+        if(shift <= -64) return (val < 0 ? -1 : 0);
+        return val >> -shift;
+    }
+}
+
+static inline unsigned long long int
+safe_shift_ull(unsigned long long int val, int shift)
+{
+    if(shift == 0) return val;
+    if(shift > 0)
+    {
+        if(shift >= 64) return 0;
+        return val << shift;
+    } else
+    {
+        if(shift <= -64) return 0;
+        return val >> -shift;
+    }
+}
+
 /* read signed big endian int from input data
    assuming that negative numbers are presented in two's complement
  */
@@ -202,9 +232,18 @@ read_int_be(size_t offset,size_t length,unsigned long int mask,int shift)
     register BUFFER c,*p;
     size_t i = 0;
 
+    if(!length) return 0;
+
     p = buffer_data() + offset;
 
     is_negative = *p & 0x80;         // check the first bit
+
+    if(length > sizeof(result))
+    {
+        offset += length - sizeof(result);
+        p = buffer_data() + offset;
+        length = sizeof(result);
+    }
 
     if(is_negative)                        // invert all bits and  add 1 to get absolute value 
     {
@@ -230,7 +269,7 @@ read_int_be(size_t offset,size_t length,unsigned long int mask,int shift)
     }
 
     if(mask) result = result & mask;
-    result = shift > 0 ? result << shift : result >> -shift;
+    result = safe_shift_ll(result, shift);
 
     return result;
 }
@@ -244,6 +283,14 @@ read_uint_be(size_t offset,size_t length,unsigned long int mask,int shift)
     register BUFFER c,*p;
     size_t i = 0;
 
+    if(!length) return 0;
+
+    if(length > sizeof(result))
+    {
+        offset += length - sizeof(result);
+        length = sizeof(result);
+    }
+
     p = buffer_data() + offset;
 
     while(i < length)
@@ -255,7 +302,7 @@ read_uint_be(size_t offset,size_t length,unsigned long int mask,int shift)
     }
 
     if(mask) result = result & mask;
-    result = shift > 0 ? result << shift : result >> -shift;
+    result = safe_shift_ull(result, shift);
 
     return result;
 }
@@ -270,12 +317,20 @@ read_int_le(size_t offset,size_t length,unsigned long int mask,int shift)
     long long int result = 0;
     int is_negative;
     register BUFFER c,*p;
-    size_t i = length;
+    size_t i;
+
+    if(!length) return 0;
 
     p = buffer_data() + offset + length - (size_t) 1;
-
     is_negative = *p & 0x80;         // check the MS bit
 
+    if(length > sizeof(result))
+    {
+        length = sizeof(result);
+        p = buffer_data() + offset + length - (size_t) 1;
+    }
+
+    i = length;
     if(is_negative)                        // invert all bits and  add 1 to get absolute value 
     {
         while(i)
@@ -300,7 +355,7 @@ read_int_le(size_t offset,size_t length,unsigned long int mask,int shift)
     }
 
     if(mask) result = result & mask;
-    result = shift > 0 ? result << shift : result >> -shift;
+    result = safe_shift_ll(result, shift);
 
     return result;
 }
@@ -313,9 +368,17 @@ read_uint_le(size_t offset,size_t length,unsigned long int mask,int shift)
 {
     unsigned long long int result = 0;
     register BUFFER c,*p;
-    size_t i = length;
+    size_t i;
+
+    if(!length) return 0;
+
+    if(length > sizeof(result))
+    {
+        length = sizeof(result);
+    }
 
     p = buffer_data() + offset + length - (size_t) 1;
+    i = length;
 
     while(i)
     {
@@ -326,7 +389,7 @@ read_uint_le(size_t offset,size_t length,unsigned long int mask,int shift)
     }
 
     if(mask) result = result & mask;
-    result = shift > 0 ? result << shift : result >> -shift;
+    result = safe_shift_ull(result, shift);
 
     return result;
 }
