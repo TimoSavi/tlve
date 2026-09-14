@@ -760,7 +760,9 @@ add_hash_list(size_t h, struct tlvdef *item)
     list->tlv = item;
 }
 
-/* free hash list 
+static struct tlvlist *range_tlv = NULL;
+
+/* free hash list and range list
  */
 static void
 free_tlvhash(void)
@@ -778,6 +780,44 @@ free_tlvhash(void)
             list = next;
         }
         tlvhash[j] = NULL;
+    }
+
+    list = range_tlv;
+    while(list != NULL)
+    {
+        next = list->next;
+        free(list);
+        list = next;
+    }
+    range_tlv = NULL;
+}
+
+/* Pre-populate hash table with all exact tags and isolate range tags
+ */
+static void
+init_tlvhash(void)
+{
+    struct tlvlist *curr = structure.tlv;
+    free_tlvhash();
+
+    while(curr != NULL)
+    {
+        struct tlvdef *p = curr->tlv;
+        if(p != NULL && p->stag != NULL)
+        {
+            if(p->stag == p->etag)
+            {
+                add_hash_list(hash(p->stag), p);
+            }
+            else
+            {
+                struct tlvlist *r = xmalloc(sizeof(struct tlvlist));
+                r->tlv = p;
+                r->next = range_tlv;
+                range_tlv = r;
+            }
+        }
+        curr = curr->next;
     }
 }
 
@@ -889,9 +929,9 @@ find_tlvdef(char *tag,TYPE tag_type)
 
     retval = search_tlvlist(tlvhash[tlv_hash],tag,tag_type);
 
-    if(retval == NULL)
+    if(retval == NULL && range_tlv != NULL)
     {
-        if((retval = search_tlvlist(structure.tlv,tag,tag_type)) != NULL)
+        if((retval = search_tlvlist(range_tlv,tag,tag_type)) != NULL)
         {
             add_hash_list(tlv_hash,retval);
         }
@@ -1357,7 +1397,7 @@ execute()
     struct tlvitem *i;
     int pl_up;
 
-    free_tlvhash();
+    init_tlvhash();
 
     print_init_path();
      
