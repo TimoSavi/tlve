@@ -904,9 +904,9 @@ read_value(struct tlvitem *tlvi)
 {
    int term_pos = -1;
    size_t consumed;
-   size_t length,length_needed;
+   size_t length,length_needed = 0;
    TYPE type;
-   char *format;
+   char *format = "%s";
 
    if(tlvi->form == T_INDEFINITE)
    {
@@ -998,12 +998,20 @@ read_value(struct tlvitem *tlvi)
             length_needed = (2 * length) + 1;     
             break;
         case T_BITSTRING:
+            format = (tlvi->tlv != NULL && (tlvi->tlv->format != NULL)) ? tlvi->tlv->format : "%s";
             length_needed = (9 * length) + 1;   // 9 because one space
             break;
         case T_OID:
+            format = (tlvi->tlv != NULL && (tlvi->tlv->format != NULL)) ? tlvi->tlv->format : "%s";
             length_needed = (8 * length) + 1;
             break;
+        default:
+            format = (tlvi->tlv != NULL && (tlvi->tlv->format != NULL)) ? tlvi->tlv->format : "%s";
+            length_needed = (4 * length) + 1;
+            break;
     }
+
+    if(length_needed < 1) length_needed = 1;
 
     
 
