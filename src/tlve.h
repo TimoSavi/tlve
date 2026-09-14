@@ -302,8 +302,8 @@ void panic(char *,char *,char *);
 VOID *xmalloc (size_t);
 VOID *xcalloc (size_t, size_t);
 VOID *xrealloc (VOID *, size_t);
-char *xstrdup (char *);
-FILE * xfopen(char *, char *, char);
+char *xstrdup (const char *);
+FILE * xfopen(const char *, const char *, char);
 
 /* parserc.c prototypes */
 void parse_rc(char *, char *,char *);

@@ -32,8 +32,7 @@ void free ();
 #endif
 
 static VOID *
-fixup_null_alloc (n)
-     size_t n;
+fixup_null_alloc (size_t n)
 {
   VOID *p;
 
@@ -53,8 +52,7 @@ fixup_null_alloc (n)
 /* Allocate N bytes of memory dynamically, with error checking.  */
 
 VOID *
-xmalloc (n)
-     size_t n;
+xmalloc (size_t n)
 {
   VOID *p;
 
@@ -67,8 +65,7 @@ xmalloc (n)
 /* Allocate memory for N elements of S bytes, with error checking.  */
 
 VOID *
-xcalloc (n, s)
-     size_t n, s;
+xcalloc (size_t n, size_t s)
 {
   VOID *p;
 
@@ -96,10 +93,12 @@ xrealloc (VOID *p, size_t n)
 /* Make a copy of a string in a newly allocated block of memory. */
 
 char *
-xstrdup (str)
-     char *str;
+xstrdup (const char *str)
 {
   VOID *p;
+
+  if (str == NULL)
+    return NULL;
 
   p = xmalloc (strlen (str) + 1);
   strcpy (p, str);
@@ -107,12 +106,12 @@ xstrdup (str)
 }
 
 FILE *
-xfopen(char *name, char *mode, char bin_asc)
+xfopen(const char *name, const char *mode, char bin_asc)
 {
-   register FILE *ret;
+   FILE *ret;
 
    ret = fopen(name,mode);
-   if(ret == NULL) panic("Error in opening file",name,strerror(errno));
+   if(ret == NULL) panic("Error in opening file",(char *) name,strerror(errno));
 
 #if defined(HAVE_SETMODE) && defined(WIN32)
    if(bin_asc == 'a') setmode(fileno(ret),O_TEXT);
