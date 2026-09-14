@@ -853,24 +853,26 @@ search_tlvlist(struct tlvlist *list,char *tag,TYPE tag_type)
         /* check if the path is defined and compare to the current path */
         if(retval != NULL && retval->path != NULL) 
         {
+            char *cur_path = print_list_path();
+
             /* add all path-cases to hash to be sure that all are scanned in next run */
             add_hash_list(hash(tag),retval);
 
             if(retval->path[0] == '*')    // Compare only trailer of the path
             {
-                register int position;
+                size_t path_len = strlen(cur_path);
+                size_t suffix_len = strlen(retval->path + 1);
 
-                position = strlen(print_list_path()) - strlen(retval->path) + 1;
-                if(position >= 0)
+                if(path_len >= suffix_len)
                 {
-                    if(STRCMP(&retval->path[1],&print_list_path()[position]) != 0) retval = NULL;
+                    if(strcmp(retval->path + 1, cur_path + (path_len - suffix_len)) != 0) retval = NULL;
                 } else
                 {
                     retval = NULL;
                 }
             } else
             {
-                if(STRCMP(retval->path,print_list_path()) != 0) retval = NULL;
+                if(strcmp(retval->path,cur_path) != 0) retval = NULL;
             }
         }
         list = list->next;
@@ -912,8 +914,8 @@ static void
 format_epoch(time_t t, char *format,char *buffer, size_t buffer_size)
 {
 #ifdef HAVE_STRFTIME
-    struct tm *ts;
-    char *f;
+    struct tm *ts = NULL;
+    char *f = NULL;
 
     if(format[0] == '+' && format[1] == '+')
     {
@@ -923,7 +925,9 @@ format_epoch(time_t t, char *format,char *buffer, size_t buffer_size)
     {
         ts = localtime(&t);
         f = format + 1;
-    } else
+    }
+
+    if(ts == NULL)
     {
         buffer[0] = 0;
         return;
@@ -1097,7 +1101,11 @@ read_value(struct tlvitem *tlvi)
 
     if(length_needed < 1) length_needed = 1;
 
-    
+    if(format != NULL)
+    {
+        size_t flen = strlen(format);
+        if(flen + 64 > length_needed) length_needed = flen + 64;
+    }
 
     if(tlvi->converted_value == NULL)
     {
@@ -1115,18 +1123,18 @@ read_value(struct tlvitem *tlvi)
     switch(type)
     {
         case T_INTBE:
-            sprintf(tlvi->converted_value,format,read_int_be(0,length,0,0));
+            snprintf(tlvi->converted_value,tlvi->converted_value_len,format,read_int_be(0,length,0,0));
             break;
         case T_INTLE:
-            sprintf(tlvi->converted_value,format,read_int_le(0,length,0,0));
+            snprintf(tlvi->converted_value,tlvi->converted_value_len,format,read_int_le(0,length,0,0));
             break;
         case T_UINTBE:
             format_epoch((time_t) read_uint_be(0,length,0,0),format,tlvi->converted_value,tlvi->converted_value_len);
-            if(!*tlvi->converted_value) sprintf(tlvi->converted_value,format,read_uint_be(0,length,0,0));
+            if(!*tlvi->converted_value) snprintf(tlvi->converted_value,tlvi->converted_value_len,format,read_uint_be(0,length,0,0));
             break;
         case T_UINTLE:
-            format_epoch((time_t) read_uint_be(0,length,0,0),format,tlvi->converted_value,tlvi->converted_value_len);
-            if(!*tlvi->converted_value) sprintf(tlvi->converted_value,format,read_uint_be(0,length,0,0));
+            format_epoch((time_t) read_uint_le(0,length,0,0),format,tlvi->converted_value,tlvi->converted_value_len);
+            if(!*tlvi->converted_value) snprintf(tlvi->converted_value,tlvi->converted_value_len,format,read_uint_le(0,length,0,0));
             break;
         case T_STRING:
             memcpy(tlvi->converted_value,buffer_data(),length);
