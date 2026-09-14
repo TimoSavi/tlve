@@ -978,6 +978,10 @@ parse_rc(char *rcfile, char *required_structure,char *printing)
                     ctlv->length_adjust = 0;
                     ctlv->maybe_constructor = 0;
                     ctlv->hold_buffer = NULL;
+                    ctlv->int_stag = 0;
+                    ctlv->int_etag = 0;
+                    ctlv->uint_stag = 0;
+                    ctlv->uint_etag = 0;
 
                     i = 0;
                     while(i < parameter_count)
@@ -1094,6 +1098,17 @@ parse_rc(char *rcfile, char *required_structure,char *printing)
                     }
                     if(ctlv->stag == NULL) config_panic("tlv: tag missing",NULL,NULL);
                     if(ctlv->etag == NULL) ctlv->etag = ctlv->stag;
+                    ctlv->int_stag = (long long int) strtoll(ctlv->stag, NULL, 10);
+                    ctlv->uint_stag = (unsigned long long int) strtoull(ctlv->stag, NULL, 10);
+                    if(ctlv->etag == ctlv->stag)
+                    {
+                        ctlv->int_etag = ctlv->int_stag;
+                        ctlv->uint_etag = ctlv->uint_stag;
+                    } else
+                    {
+                        ctlv->int_etag = (long long int) strtoll(ctlv->etag, NULL, 10);
+                        ctlv->uint_etag = (unsigned long long int) strtoull(ctlv->etag, NULL, 10);
+                    }
                     if(printing != NULL) ctlv->print_name = xstrdup(printing);
                 }
                 break;

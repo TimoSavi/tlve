@@ -214,6 +214,10 @@ struct tlvdef
     char *name;             // name of the tlv triplet
     char *stag;             // tag to identify the triplet, if range is used this is the first value
     char *etag;             // end value for tag range, if no range -> stag == etag; 
+    long long int int_stag; // pre-parsed numeric start tag
+    long long int int_etag; // pre-parsed numeric end tag
+    unsigned long long int uint_stag; // pre-parsed unsigned start tag
+    unsigned long long int uint_etag; // pre-parsed unsigned end tag 
     TYPE type;              // T_CONSTRUCTED, T_PRIMITIVE or T_EOC
     TYPE form;              // T_DEFINITE or T_INDEFINITE
     TYPE valuetype;         // T_INTLE, T_INTBE, T_STRING, T_HEX, T_BCD

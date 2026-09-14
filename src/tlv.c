@@ -816,11 +816,11 @@ search_tlvlist(struct tlvlist *list,char *tag,TYPE tag_type)
             {
                 case T_INTBE:
                 case T_INTLE:
-                    if(int_tag == (long long int) strtoll(p->stag,NULL,10)) retval = p;
+                    if(int_tag == p->int_stag) retval = p;
                     break;
                 case T_UINTBE:
                 case T_UINTLE:
-                    if(uint_tag == (unsigned long long int) strtoull(p->stag,NULL,10)) retval = p;
+                    if(uint_tag == p->uint_stag) retval = p;
                     break;
                 case T_STRING:
                 case T_HEX:
@@ -834,13 +834,11 @@ search_tlvlist(struct tlvlist *list,char *tag,TYPE tag_type)
             {
                 case T_INTBE:
                 case T_INTLE:
-                    if(int_tag >= (long long int) strtoll(p->stag,NULL,10) && 
-                       int_tag <= (long long int) strtoll(p->etag,NULL,10)) retval = p;
+                    if(int_tag >= p->int_stag && int_tag <= p->int_etag) retval = p;
                     break;
                 case T_UINTBE:
                 case T_UINTLE:
-                    if(uint_tag >= (unsigned long long int) strtoull(p->stag,NULL,10) && 
-                       uint_tag <= (unsigned long long int) strtoull(p->etag,NULL,10)) retval = p;
+                    if(uint_tag >= p->uint_stag && uint_tag <= p->uint_etag) retval = p;
                     break;
                 case T_STRING:
                 case T_HEX:
