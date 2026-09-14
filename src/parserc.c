@@ -846,7 +846,7 @@ parse_rc(char *rcfile, char *required_structure,char *printing)
                     }
                 } else
                 {
-                    config_panic("Unknown parameter for typemap",parameters[pvpairs[i].parameter],NULL);
+                    config_panic("map keyword found outside of typemap definition",NULL,NULL);
                 }
                 break;
             case K_TL:
