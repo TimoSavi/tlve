@@ -199,19 +199,13 @@ static char *
 print_list_get_item_name(struct tlvitem *i)
 {
     static char name[MAX_NAME];
-    size_t tag_len;
 
     if(i->tlv != NULL && (i->tlv->name != NULL))
     {
         return i->tlv->name;
     }
 
-    tag_len = strlen(i->tag);
-
-    name[0] = TAG_PREFIX;
-    strcpy(name + 1,i->tag);
-    name[tag_len + 1] = TAG_TRAILER;
-    name[tag_len + 2] = 0;
+    snprintf(name, sizeof(name), "%c%s%c", TAG_PREFIX, i->tag, TAG_TRAILER);
 
     return name;
 }

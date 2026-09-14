@@ -2,11 +2,7 @@
 #include "config.h"
 #endif
 
-#if __STDC__
-# define VOID void
-#else
-# define VOID char
-#endif
+#define VOID void
 
 #if STDC_HEADERS
 
