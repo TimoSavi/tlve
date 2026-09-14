@@ -18,6 +18,9 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  
 */ 
 #include "tlve.h"
+#if defined(HAVE_WORKING_FORK) && defined(HAVE_DUP2) && defined(HAVE_PIPE)
+#include <sys/wait.h>
+#endif
 
 
 /* input buffer size, this dictates etc. the maximum tlv triplet size */
@@ -51,6 +54,9 @@ struct input_file
     char *name;
     FILE_OFFSET offset;
     FILE *fp;
+#if defined(HAVE_WORKING_FORK) && defined(HAVE_DUP2) && defined(HAVE_PIPE)
+    pid_t pid;
+#endif
     struct input_file *next;
 };
 
@@ -86,6 +92,90 @@ set_input_file(char *name)
     f->offset = (FILE_OFFSET) 0;
     f->name = xstrdup(name);
     f->fp = NULL;
+#if defined(HAVE_WORKING_FORK) && defined(HAVE_DUP2) && defined(HAVE_PIPE)
+    f->pid = (pid_t) 0;
+#endif
+}
+
+#if defined(HAVE_WORKING_FORK) && defined(HAVE_DUP2) && defined(HAVE_PIPE)
+/* Escape a string for safe inclusion in POSIX shell command arguments */
+static char *
+shell_escape(const char *str)
+{
+    size_t len = strlen(str);
+    size_t max_len = len * 4 + 3;
+    char *escaped = xmalloc(max_len);
+    char *p = escaped;
+    size_t i;
+
+    *p++ = '\'';
+    for(i = 0; i < len; i++)
+    {
+        if(str[i] == '\'')
+        {
+            *p++ = '\'';
+            *p++ = '\\';
+            *p++ = '\'';
+            *p++ = '\'';
+        } else
+        {
+            *p++ = str[i];
+        }
+    }
+    *p++ = '\'';
+    *p = '\0';
+    return escaped;
+}
+
+/* Construct safe preprocessor command without sprintf buffer overflow or injection */
+static char *
+build_preprocessor_command(const char *template, const char *filename)
+{
+    char *escaped_filename = shell_escape(filename);
+    char *pos = strstr(template, "%s");
+    char *cmd;
+
+    if(pos != NULL)
+    {
+        size_t prefix_len = pos - template;
+        size_t suffix_len = strlen(pos + 2);
+        size_t esc_len = strlen(escaped_filename);
+        cmd = xmalloc(prefix_len + esc_len + suffix_len + 1);
+        memcpy(cmd, template, prefix_len);
+        memcpy(cmd + prefix_len, escaped_filename, esc_len);
+        memcpy(cmd + prefix_len + esc_len, pos + 2, suffix_len + 1);
+    } else
+    {
+        size_t tlen = strlen(template);
+        size_t esc_len = strlen(escaped_filename);
+        cmd = xmalloc(tlen + 1 + esc_len + 1);
+        memcpy(cmd, template, tlen);
+        cmd[tlen] = ' ';
+        memcpy(cmd + tlen + 1, escaped_filename, esc_len + 1);
+    }
+    free(escaped_filename);
+    return cmd;
+}
+#endif
+
+/* Close input file and reap any associated preprocessor child process */
+static void
+close_input_file(struct input_file *f)
+{
+    if(f == NULL) return;
+    if(f->fp != NULL)
+    {
+        if(f->fp != stdin) fclose(f->fp);
+        f->fp = NULL;
+    }
+#if defined(HAVE_WORKING_FORK) && defined(HAVE_DUP2) && defined(HAVE_PIPE)
+    if(f->pid > (pid_t) 0)
+    {
+        int status;
+        waitpid(f->pid, &status, 0);
+        f->pid = (pid_t) 0;
+    }
+#endif
 }
 
 /* open next input file, return 0 if no more files */
@@ -98,7 +188,7 @@ open_next_input_file()
         current_file = files;
     } else
     {
-        fclose(current_file->fp); 
+        close_input_file(current_file); 
         current_file = current_file->next;
     }
 
@@ -110,26 +200,26 @@ open_next_input_file()
         current_file->name = "stdin";
     } else
     {
-        int fds[2];
-        pid_t pid;
-        char command[1024];
-
         if(tlve_open != NULL && tlve_open[0] != '\000')                // use preprocessor
         {
 #if defined(HAVE_WORKING_FORK) && defined(HAVE_DUP2) && defined(HAVE_PIPE)
-            sprintf(command,tlve_open,current_file->name);
+            int fds[2];
+            pid_t pid;
+            char *command = build_preprocessor_command(tlve_open, current_file->name);
+
             if (pipe(fds) != 0) panic("Cannot create pipe",strerror(errno),NULL);
             pid = fork();
             if(pid == (pid_t) 0) /* Child */
             {
                 close(fds[0]);
                 if(dup2(fds[1],STDOUT_FILENO) == -1) panic("dup2 error",strerror(errno),NULL);
-                if(execl(SHELL_CMD, "sh", "-c", command, NULL) == -1) panic("Starting a shell with execl failed",command,strerror(errno));
+                if(execl(SHELL_CMD, "sh", "-c", command, (char *) NULL) == -1) panic("Starting a shell with execl failed",command,strerror(errno));
                 close(fds[1]);
                 _exit(EXIT_SUCCESS);
             } else if(pid > (pid_t) 0)
             {
                 close(fds[1]);
+                current_file->pid = pid;
                 current_file->fp = fdopen(fds[0],"r");
                 if(current_file->fp == NULL) panic("Cannot read from command",command,strerror(errno));
 
@@ -138,12 +228,12 @@ open_next_input_file()
                 if(ungetchar == EOF)       // check if pipe returns something, if not open file normally
                 {
                     ungetchar = -1;
-                    fclose(current_file->fp);
-                    current_file->fp = NULL;
+                    close_input_file(current_file);
                 }
-
+                free(command);
             } else
             {
+                free(command);
                 panic("Cannot fork",strerror(errno),NULL);
             }
 #else
