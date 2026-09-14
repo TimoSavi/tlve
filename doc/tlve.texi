@@ -284,6 +284,14 @@ Only elements that are at level @var{level} or higher in the element hierarchy a
 
 If both this option and @option{-n, --name-list} are defined, only names that appear at level @var{level} or higher in the element hierarchy are printed.
 
+@item --json
+@itemx -j
+Output parsed elements in JSON Lines (NDJSON) format, emitting one complete JSON object per top-level TLV record.
+
+@item --pretty
+@itemx -J
+Pretty-print JSON output with multi-line indentation.
+
 @item --help
 @itemx -h
 @itemx -?

@@ -84,7 +84,7 @@ char *tlve_open = NULL;
 
 static void usage (int status);
 
-static char short_opts[] = "o:hVc:dn:s:e:ap:l:L:";
+static char short_opts[] = "o:hVc:dn:s:e:ap:l:L:jJ";
 
 #ifdef HAVE_GETOPT_LONG
 static struct option long_opts[] =
@@ -101,6 +101,8 @@ static struct option long_opts[] =
   {"print", 1, 0, 'p'},
   {"start-level", 1, 0, 'l'},
   {"stop-level", 1, 0, 'L'},
+  {"json", 0, 0, 'j'},
+  {"pretty", 0, 0, 'J'},
   {NULL, 0, NULL, 0}
 };
 #endif
@@ -260,6 +262,12 @@ main (int argc, char **argv)
             case 'L':
                 print_set_print_stop_level(atoi(optarg));
                 break;
+            case 'j':
+                json_init(0);
+                break;
+            case 'J':
+                json_init(1);
+                break;
             case 'h':
                 usage(EXIT_SUCCESS);
                 break;
@@ -361,6 +369,8 @@ Options:\n\
   -o, --output NAME           send output to NAME instead of standard output\n\
   -l, --start-level LEVEL     first level in element hierarchy to be printed\n\
   -L, --stop-level LEVEL      last level in element hierarchy to be printed\n\
+  -j, --json                  output in JSON Lines (NDJSON) format\n\
+  -J, --pretty                pretty-print JSON output\n\
   -h, --help                  display this help and exit\n\
   -V, --version               output version information and exit\n\
 \nAll remaining arguments are names of input files;\n\

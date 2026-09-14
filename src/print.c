@@ -177,14 +177,14 @@ print_list_path()
 }
 
 /* write string to output */
-static inline void
+void
 print_list_writes(char *string)
 {
     if(fputs(string,ofp) == EOF) panic("Error writing to output",strerror(errno),NULL);
 }
 
 /* write a char to output */
-static inline void
+void
 print_list_writec(char c)
 {
     if(fputc(c,ofp) == EOF) panic("Error writing to output",strerror(errno),NULL);
@@ -195,7 +195,7 @@ print_list_writec(char c)
 
    value is in static buffer so it must be copied before use
  */
-static char *
+char *
 print_list_get_item_name(struct tlvitem *i)
 {
     static char name[MAX_NAME];
@@ -1038,6 +1038,7 @@ print_item(struct tlvitem *i,char *data,char *indent,char *fencoding, char *toen
 void
 print_file_header()
 {
+    if(json_mode) return;
     print_item(NULL,structure.p->file_head,structure.p->indent,NULL,NULL,format_file);
 }
 
@@ -1045,6 +1046,11 @@ print_file_header()
 void
 print_file_trailer()
 {
+    if(json_mode)
+    {
+        json_finish();
+        return;
+    }
     print_item(NULL,structure.p->file_trailer,structure.p->indent,NULL,NULL,format_file);
 }
 
@@ -1188,27 +1194,45 @@ print_list_do_print()
             while((prev_c = search_prev_constructor_tr_not_printed(last_item)) != NULL &&
                     (prev_c->item->level >= item->level))
             {
-                pdata = print_list_print_data(prev_c);
-                print_item(prev_c->item,pdata->level_trailer,pdata->indent,NULL,NULL,format_level_trailer);
+                if(json_mode)
+                {
+                    json_close_level();
+                } else
+                {
+                    pdata = print_list_print_data(prev_c);
+                    print_item(prev_c->item,pdata->level_trailer,pdata->indent,NULL,NULL,format_level_trailer);
+                }
                 prev_c->trailer_printed = 1;
             }
         } 
 
         if(!p->printed)
         {
-            pdata = print_list_print_data(p);
-
-            switch(item->tlv_type)
+            if(json_mode)
             {
-                case T_CONSTRUCTED:
-                    print_item(item,pdata->level_head,pdata->indent,NULL,NULL,format_level_head);
-                    break;
-                default:
-                    from = item->tlv != NULL && item->tlv->encoding != NULL ? item->tlv->encoding : NULL;
-                    to = pdata->encoding != NULL ? pdata->encoding : codeset;
-                    print_item(item,pdata->content,pdata->indent,from,to,format_primitive);
-                    if(p->next) print_list_separator(pdata->separator);
-                    break;
+                if(item->tlv_type == T_CONSTRUCTED)
+                {
+                    json_add_constructed(item);
+                } else
+                {
+                    json_add_primitive(item);
+                }
+            } else
+            {
+                pdata = print_list_print_data(p);
+
+                switch(item->tlv_type)
+                {
+                    case T_CONSTRUCTED:
+                        print_item(item,pdata->level_head,pdata->indent,NULL,NULL,format_level_head);
+                        break;
+                    default:
+                        from = item->tlv != NULL && item->tlv->encoding != NULL ? item->tlv->encoding : NULL;
+                        to = pdata->encoding != NULL ? pdata->encoding : codeset;
+                        print_item(item,pdata->content,pdata->indent,from,to,format_primitive);
+                        if(p->next) print_list_separator(pdata->separator);
+                        break;
+                }
             }
             p->printed = 1;
         }
@@ -1221,8 +1245,14 @@ print_list_do_print()
     while((prev_c = search_prev_constructor_tr_not_printed(last_item)) != NULL &&
             (prev_c->item->level >= (unsigned int) get_current_level()))
     {
-        pdata = print_list_print_data(prev_c);
-        print_item(prev_c->item,pdata->level_trailer,pdata->indent,NULL,NULL,format_level_trailer);
+        if(json_mode)
+        {
+            json_close_level();
+        } else
+        {
+            pdata = print_list_print_data(prev_c);
+            print_item(prev_c->item,pdata->level_trailer,pdata->indent,NULL,NULL,format_level_trailer);
+        }
         prev_c->trailer_printed = 1;
     }
 
@@ -1243,9 +1273,9 @@ print_list_print()
             {
                 print_something = print_list_printable();
 
-                if(print_something) print_item(NULL,structure.p->block_start,structure.p->indent,NULL,NULL,format_file);
+                if(print_something && !json_mode) print_item(NULL,structure.p->block_start,structure.p->indent,NULL,NULL,format_file);
                 print_list_do_print();
-                if(print_something) print_item(NULL,structure.p->block_end,structure.p->indent,NULL,NULL,format_file);
+                if(print_something && !json_mode) print_item(NULL,structure.p->block_end,structure.p->indent,NULL,NULL,format_file);
             }
             print_list_purge(1);
             buffer(B_PRINTED,0);

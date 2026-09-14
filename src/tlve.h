@@ -361,7 +361,16 @@ void print_init_path();
 void print_list_clear_hold();
 char *print_list_hex_dump(BUFFER *,size_t); 
 void free_print_list(); 
+void print_list_writes(char *);
+void print_list_writec(char);
+char *print_list_get_item_name(struct tlvitem *);
 
+/* json.c prototypes */
+void json_init(int);
+void json_add_primitive(struct tlvitem *);
+void json_add_constructed(struct tlvitem *);
+void json_close_level(void);
+void json_finish(void);
 
 /* ber.c prototypes */
 size_t read_ber_tag(char *,TYPE *,TYPE *);
@@ -369,13 +378,9 @@ size_t read_ber_length(FILE_OFFSET *,size_t);
 void format_ber_bit_string(char *,BUFFER *, size_t);
 void format_oid(char *,BUFFER *, size_t);
 
-
-
 /* iconv.c prototypes */
 char *make_iconv(char *,char *,char *);
 void free_iconv(void);
-
-
 
 #endif
 
@@ -401,6 +406,8 @@ extern struct hold *hold;
 extern struct type_mappings *type_maps;
 extern int debug;
 extern int expression_and;
+extern int json_mode;
+extern int json_pretty;
 extern char *codeset;
 
 extern char *program_name;

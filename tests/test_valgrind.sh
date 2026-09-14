@@ -43,4 +43,10 @@ printf '\x07\xd0\x00\x04\x01\x02\x03\x04' | $VG "$TLVE" -c "$EXDIR/binary.rc" -s
 # 4. TAP3 stream
 printf '\x61\x05\x64\x03\x02\x01\x05' | $VG "$TLVE" -c "$EXDIR/tap_3_11.rc" -s tap311 -o /dev/null
 
+# 5. JSON Lines stream
+printf '\x30\x0a\x02\x01\x2a\x04\x05hello\x30\x80\x02\x01\x07\x00\x00' | $VG "$TLVE" -j -c "$EXDIR/ber.rc" -s BER -o /dev/null
+
+# 6. JSON Pretty stream
+printf '\x30\x0a\x02\x01\x2a\x04\x05hello' | $VG "$TLVE" -J -c "$EXDIR/ber.rc" -s BER -o /dev/null
+
 exit 0
