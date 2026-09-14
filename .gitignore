@@ -39,3 +39,4 @@ doc/version.texi
 /src/tlve
 callgrind*
 *.bak
+*.trs

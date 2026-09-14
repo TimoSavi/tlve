@@ -56,5 +56,6 @@ AC_CHECK_FUNCS([strtoll strtoull atoll iconv_open dup2 pipe])
 AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  examples/Makefile
-                 src/Makefile])
+                 src/Makefile
+                 tests/Makefile])
 AC_OUTPUT
