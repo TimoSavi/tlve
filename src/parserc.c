@@ -205,15 +205,15 @@ config_panic(char *e1,char *e2,char *e3)
 /* search keyword table for a keyword, search is not case-sensitive */
 /* if not found return E_UNKNOWN */
 static int
-search_config_item(char **table,int count,char *keyword)
+search_config_item(char **table,int count,char *item)
 {
     int i = 0;
 
-    if(keyword == NULL) return E_UNKNOWN;
+    if(item == NULL) return E_UNKNOWN;
 
     while(i <= count)
     {
-        if(STRCMP(table[i],keyword) == 0) return i;
+        if(STRCMP(table[i],item) == 0) return i;
         i++;
     }
 
