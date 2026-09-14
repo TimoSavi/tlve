@@ -297,6 +297,8 @@ main (int argc, char **argv)
     execute();
 
     print_list_close_output();
+    free_input_files();
+    free_buffer();
 
     exit (EXIT_SUCCESS);
 }

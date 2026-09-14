@@ -326,6 +326,8 @@ void buffer_error(char *,struct tlvitem *);
 void buffer_ahead();
 void buffer_back();
 int buffer_address_safe(BUFFER *);
+void free_input_files();
+void free_buffer();
 
 /* tlv.c prototypes */
 int get_current_level();

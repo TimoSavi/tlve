@@ -197,7 +197,8 @@ open_next_input_file()
     if(current_file->name[0] == '-' && current_file->name[1] == 0)
     {
         current_file->fp = stdin;
-        current_file->name = "stdin";
+        free(current_file->name);
+        current_file->name = xstrdup("stdin");
     } else
     {
         if(tlve_open != NULL && tlve_open[0] != '\000')                // use preprocessor
@@ -510,7 +511,12 @@ buffer_error(char *message,struct tlvitem *e)
     char *file = "tlve.debug";
     FILE *fp;
 
-    if(message) fprintf(stderr,"%s: %s, in file '%s', offset %lld\n",program_name,message,current_file->name,(long long int) current_file->offset - (long long int) (e ? e->raw_tl_length : 0));
+    if(message)
+    {
+        const char *fname = current_file ? current_file->name : "unknown";
+        long long int offset = current_file ? ((long long int) current_file->offset - (long long int) (e ? e->raw_tl_length : 0)) : 0;
+        fprintf(stderr,"%s: %s, in file '%s', offset %lld\n",program_name,message,fname,offset);
+    }
 
     if(debug)
     {
@@ -538,4 +544,37 @@ buffer_error(char *message,struct tlvitem *e)
 
     }
     panic(NULL,NULL,NULL);
+}
+
+/* Free all input file nodes, strings, and open handles */
+void
+free_input_files()
+{
+    struct input_file *f = files;
+    struct input_file *next;
+
+    while(f != NULL)
+    {
+        next = f->next;
+        close_input_file(f);
+        if(f->name != NULL) free(f->name);
+        free(f);
+        f = next;
+    }
+    files = NULL;
+    current_file = NULL;
+}
+
+/* Free main buffer */
+void
+free_buffer()
+{
+    if(buffer_start != NULL)
+    {
+        free(buffer_start);
+        buffer_start = NULL;
+        buffer_end = NULL;
+        data_end = NULL;
+        new_data = NULL;
+    }
 }
