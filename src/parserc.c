@@ -542,7 +542,7 @@ parse_bo(char *bo_string)
     *p = 0;
     if(p > s)
     {
-        sscanf(s,"%li",&ret->mask);
+        ret->mask = strtoul(s, NULL, 0);
     }
 
     if(done) goto end;
