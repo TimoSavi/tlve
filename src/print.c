@@ -688,7 +688,7 @@ print_list_add_item(struct tlvitem *item)
 void 
 print_list_open_output(char *file)
 {
-    if(file[0] == '-' && !file[1])
+    if(file == NULL || (file[0] == '-' && !file[1]))
     {
         ofp = stdout;
     } else
@@ -701,17 +701,29 @@ print_list_open_output(char *file)
 void 
 print_list_close_output()
 {
-    if(fclose(ofp) != 0) panic("Error closing output file",strerror(errno),NULL);
+    if(ofp == NULL) return;
+    if(ofp == stdout)
+    {
+        if(fflush(ofp) != 0) panic("Error flushing output to stdout",strerror(errno),NULL);
+        ofp = NULL;
+    } else
+    {
+        if(fclose(ofp) != 0) panic("Error closing output file",strerror(errno),NULL);
+        ofp = NULL;
+    }
 }
 
 /* print indent */
 static void 
 print_list_indent(char *indent,unsigned int level)
 {
-    if(indent == NULL) return;
-    if(indent[0] == 0) return;
+    if(indent == NULL || indent[0] == 0) return;
 
-    while(--level) print_list_writes(indent);
+    while(level > 1)
+    {
+        print_list_writes(indent);
+        level--;
+    }
 }
 
 /* format a hex dump as xnnxnn..., where nn is the hex-value of an octet 
