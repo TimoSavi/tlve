@@ -1,7 +1,7 @@
-# ASN.1 ber example configuration.
-# This file is for reading any ASN.1 BER encoded file, this
-# example contains names only for Universal class tags, add your
-# own tags using tlv-keyword
+# ASN.1 BER example configuration.
+# This file is for reading any ASN.1 BER encoded file. This
+# example contains names only for Universal class tags; add your
+# own tags using the tlv keyword.
 
 #  test this by command:
 #  tlve -c ber.rc -s BER <inputfile>
@@ -42,7 +42,7 @@ tlv name=BMPString tag="U-30" value-type=string encoding=UCS-4
 structure-end
 
 # printing definitions
-# XML produced using this may not be well formed
+# XML produced using this may not be well-formed
 print name=XML file-start="<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" \
       value="<%n>%v</%n>\n" constructor="<%n>\n" constructor-end="</%n>\n" encoding="ISO-8859-1" indent="  "
 

@@ -28,10 +28,10 @@
 static iconv_t *cd = (iconv_t) -1;
 #endif
 
-/* previous used from/to pair 
+/* previously used from/to pair 
    these are saved assuming that the next conversion will use the same pair
 
-   if the same pair id not used, a new handle must be open
+   if the same pair is not used, a new handle must be opened
  */
 static char *prev_from = "--UNKNOWN--";
 static char *prev_to = "--UNKNOWN--";
@@ -40,7 +40,7 @@ static char *prev_to = "--UNKNOWN--";
 static char *outb = NULL;
 static size_t outb_size = 0;
 
-/* make conversion return to pointer to converted value */
+/* perform conversion; return pointer to converted value */
 char *
 make_iconv(char *data,char *from,char *to)
 {

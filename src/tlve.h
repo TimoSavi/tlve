@@ -133,7 +133,7 @@
 
 typedef unsigned int TYPE;
 typedef unsigned char BUFFER;
-typedef long long int FILE_OFFSET;   // use system maximum regardless real offset
+typedef long long int FILE_OFFSET;   // use system maximum regardless of real offset
 
 /* Type mappings */
 struct type_map
@@ -157,9 +157,9 @@ struct bo
     TYPE type;              // T_INTBE,T_INTLE,T_STRING, T_BER or T_UNKNOWN if not applicable
     size_t length;          // length of the object, use terminator if zero
     char terminator;        // terminating char for the object must have either length or terminator, if length == 0, use this
-    int use_terminator;     // should length or termiantor be used, (terminator migth be null...) so extra flag
+    int use_terminator;     // should length or terminator be used (terminator might be null...), so extra flag
     unsigned long int mask; // bitmask for object
-    int shift;              // should object be shifted after rading from input, positive left, negative right
+    int shift;              // should object be shifted after reading from input; positive left, negative right
     size_t offset;          // relative to start of the tlv object
     int use_offset;         // offset might be zero, so extra flag is needed...
 };
@@ -172,13 +172,13 @@ struct print
     char *file_trailer;     // data to be printed when file is closed
     char *level_head;       // data to be printed when level changes down
     char *level_trailer;    // data to be printed when level changes up
-    char *block_start;      // data to be printed before data block, which have been found using expression
-    char *block_end;        // data to be printed after data block, which have been found using expression
+    char *block_start;      // data to be printed before a data block found using an expression
+    char *block_end;        // data to be printed after a data block found using an expression
     char *content;          // data to be printed for every tlv
-    char *ucontent;         // data to be printed for every tlv which is not named using tlv info
+    char *ucontent;         // data to be printed for every TLV that is not named using TLV info
     char *indent;           // string to be used when indenting
     char *encoding;         // which encoding to use in printing when data encoding is known
-    char separator;         // character to be printed after every conted in level, except the last
+    char separator;         // character to be printed after every content item in level, except the last
     struct print *next;
 };
 
@@ -190,7 +190,7 @@ struct tldef
     struct bo *type;        // Type information
     struct bo *len;         // length information
     TYPE form;              // T_DEFINITE or T_INDEFINITE
-    int tl_included;        // TRUE = length includes the tag-length part the tlv, FALSE = length is the legngth of the value only
+    int tl_included;        // TRUE = length includes tag-length part of the TLV; FALSE = length is the length of value only
     BUFFER *value_terminator; // if length is not used, this char will indicate the end of content
     size_t value_terminator_len; // length of the content_terminator
     char *print_name;        // which printing definition should be used with this type of data
@@ -214,14 +214,14 @@ struct hold
 /* Information for tag-length-value triplet */
 struct tlvdef
 {
-    char *path;             // if != NULL, name is check only if this is the same as current path
+    char *path;             // if != NULL, name is checked only if this matches the current path
     char *name;             // name of the tlv triplet
     char *stag;             // tag to identify the triplet, if range is used this is the first value
     char *etag;             // end value for tag range, if no range -> stag == etag; 
     TYPE type;              // T_CONSTRUCTED, T_PRIMITIVE or T_EOC
     TYPE form;              // T_DEFINITE or T_INDEFINITE
     TYPE valuetype;         // T_INTLE, T_INTBE, T_STRING, T_HEX, T_BCD
-    int maybe_constructor;  // if yes, check the start of the data if it is a valid tl-pair -> this is constructor
+    int maybe_constructor;  // if yes, check the start of the data for a valid tl-pair -> this is a constructor
     char *content_tl_name;  // tag-length info to use
     struct tldef *content_tl;  // pointer to tag-length info in case this is a constructor, if NULL use one from structure
     char *print_name;       // print-info to be used
@@ -232,7 +232,7 @@ struct tlvdef
     struct hold *hold_buffer; // place to store data for later use.
 };
 
-/* list for seaarching tlvedef, used also in bash table */
+/* list for searching tlvdef; also used in hash table */
 struct tlvlist
 {
     struct tlvdef *tlv;     
@@ -245,7 +245,7 @@ struct tlvlist
 
 struct tlvitem
 {
-    unsigned int level;     // in which level this tlv was found
+    unsigned int level;     // level at which this TLV was found
     char tag[MAX_TAG_SIZE]; // tag as visible null-terminated string 
     char type[MAX_TAG_SIZE]; // type as visible null-terminated string 
     FILE_OFFSET length;     // length from the tl-pair
@@ -253,21 +253,21 @@ struct tlvitem
     FILE_OFFSET total_offset; // Offset of the total input data where this data was found
     TYPE tlv_type;          // T_CONSTRUCTED, T_PRIMITIVE or T_EOC if recognized from data, otherwise T_UNKNOWN
     TYPE form;              // T_DEFINITE or T_INDEFINITE
-    BUFFER *raw_tl;         // pointer to whole tlv raw data;
+    BUFFER *raw_tl;         // pointer to whole TLV raw data
     size_t raw_tl_length;   // length of the raw tl part
     BUFFER *raw_value;        // pointer to the value part
-    size_t raw_value_length;// length of the value part, contains also possible terminating string
+    size_t raw_value_length;// length of the value part; also contains possible terminating string
     size_t converted_value_len; // length of the converted_value
-    char *converted_value;  // data after conversions etc, visible string
+    char *converted_value;  // data after conversions etc., visible string
     struct tldef *tl;       // pointer to tl-data, cannot be null
     struct tlvdef *tlv;     // pointer to tlv-data, can be null
 };
 
 struct printlist
 {
-    struct tlvitem *item;    // pointer to found data, cannot be null
-    int printed;             // is the tlv data or level header printed
-    int trailer_printed;     // in case a constructed item, is the level trailer printed
+    struct tlvitem *item;    // pointer to found data; cannot be NULL
+    int printed;             // whether TLV data or level header is printed
+    int trailer_printed;     // in case of a constructed item, whether the level trailer is printed
     struct printlist *prev;  // previous item, NULL if first
     struct printlist *next;  // next item, NULL if last
 };
@@ -277,8 +277,8 @@ struct level
 {
     TYPE form;               // T_DEFINITE or T_INDEFINITE
     struct tldef *content_tl;  // pointer to tag-length info for this level
-    FILE_OFFSET size;        // raw data size known to this level, will be decrement after every tlv read, when reaches 0, level is done
-};                           // size will get negative for indefinite levels, must be signed
+    FILE_OFFSET size;        // raw data size known to this level; decremented after every TLV read; when it reaches 0, level is done
+};                           // size becomes negative for indefinite levels; must be signed
 
 struct structure
 {
@@ -305,7 +305,7 @@ VOID *xrealloc (VOID *, size_t);
 char *xstrdup (char *);
 FILE * xfopen(char *, char *, char);
 
-/* parse.rc prototypes */
+/* parserc.c prototypes */
 void parse_rc(char *, char *,char *);
 
 /* buffer.c prototypes */
@@ -359,7 +359,7 @@ void format_oid(char *,BUFFER *, size_t);
 
 
 
-/* inconv.c prototypes */
+/* iconv.c prototypes */
 char *make_iconv(char *,char *,char *);
 
 

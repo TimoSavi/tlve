@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<!-- Created by GNU Texinfo 6.7, http://www.gnu.org/software/texinfo/ -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>tlve</title>
@@ -17,23 +17,14 @@
 <!--
 a.summary-letter {text-decoration: none}
 blockquote.indentedblock {margin-right: 0em}
-blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
-blockquote.smallquotation {font-size: smaller}
 div.display {margin-left: 3.2em}
 div.example {margin-left: 3.2em}
 div.lisp {margin-left: 3.2em}
-div.smalldisplay {margin-left: 3.2em}
-div.smallexample {margin-left: 3.2em}
-div.smalllisp {margin-left: 3.2em}
 kbd {font-style: oblique}
 pre.display {font-family: inherit}
 pre.format {font-family: inherit}
 pre.menu-comment {font-family: serif}
 pre.menu-preformatted {font-family: serif}
-pre.smalldisplay {font-family: inherit; font-size: smaller}
-pre.smallexample {font-size: smaller}
-pre.smallformat {font-family: inherit; font-size: smaller}
-pre.smalllisp {font-size: smaller}
 span.nolinebreak {white-space: nowrap}
 span.roman {font-family: initial; font-weight: normal}
 span.sansserif {font-family: sans-serif; font-weight: normal}
@@ -131,36 +122,31 @@ div.node hr {
 
 
 
-<a name="Top"></a>
-<h1 class="node-heading">Top</h1>
+<span id="Top"></span><h1 class="node-heading">Top</h1>
 
 
 
 
 <hr>
-<a name="Overview"></a>
-<a name="Overview-1"></a>
-<h2 class="chapter">1 Overview</h2>
-<a name="index-greetings"></a>
-<a name="index-overview"></a>
+<span id="Overview"></span><span id="Overview-1"></span><h2 class="chapter">1 Overview</h2>
+<span id="index-greetings"></span>
+<span id="index-overview"></span>
 
 <p>The <code>tlve</code> program is a command-line tool for parsing different
-<acronym title="tag-length-value">tlv</acronym> (tag-length-value) structures and for printing them in various text-based formats.
-In order to correctly parse the input data <code>tlve</code> uses a text-based configuration.
-Default configuration file is <samp>~/.tlverc</samp> (<samp>tlve.rc</samp> in windows).
+<acronym title="Tag-Length-Value">TLV</acronym> (Tag-Length-Value) structures and printing them in various text-based formats.
+In order to correctly parse input data, <code>tlve</code> uses a text-based configuration file.
+The default configuration file is <samp>~/.tlverc</samp> (<samp>tlve.rc</samp> on Windows).
 </p>
-<p><code>tlve</code> can parse text or binary (including ASN.1 BER) tlv structures. Tag, length and value can have 
-fixed length or separated format. Values can be presented in different formats and converted to different encoding.
+<p><code>tlve</code> can parse text or binary (including ASN.1 BER) TLV structures. Tag, length, and value can have 
+fixed lengths or use delimited formats. Values can be represented in different formats and converted to different character encodings.
 </p>
 <p><code>tlve</code> was written by Timo Savinen.
 </p>
 <p>This file documents version 2.3-24 of <code>tlve</code>.
 </p>
 <hr>
-<a name="Sample"></a>
-<a name="Sample-Output"></a>
-<h2 class="chapter">2 Sample Output</h2>
-<a name="index-sample"></a>
+<span id="Sample"></span><span id="Sample-Output"></span><h2 class="chapter">2 Sample Output</h2>
+<span id="index-sample"></span>
 
 <p>Here are some realistic examples of running <code>tlve</code>.
 </p>
@@ -169,15 +155,15 @@ fixed length or separated format. Values can be presented in different formats a
 <table class="cartouche" border="1"><tr><td>
 <div class="example">
 <pre class="example">$cat ber.rc
-# ASN.1 ber example configuration.
+# ASN.1 BER example configuration.
 # This file is for reading any ASN.1 BER encoded file, this
 # example contains names only for Universal class tags, add your
 # own tags using tlv-keyword
 
 #  test this by command:
-#  tlve -c ber.tlverc -s BER &lt;inputfile&gt;
+#  tlve -c ber.rc -s BER &lt;inputfile&gt;
 # or
-#  tlve -c ber.tlverc -s BER -p dump &lt;inputfile&gt;
+#  tlve -c ber.rc -s BER -p dump &lt;inputfile&gt;
 
 tl name=asn1ber tag=ber length=ber
 
@@ -213,7 +199,7 @@ tlv name=BMPString tag=&quot;U-30&quot; value-type=string encoding=UCS-4
 structure-end
 
 # printing definitions
-# XML produced using this may not be wellformed
+# XML produced using this may not be well-formed
 print name=XML file-start=&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;ISO-8859-1\&quot;?&gt;\n&quot; \
       value=&quot;&lt;%n&gt;%v&lt;/%n&gt;\n&quot; constructor=&quot;&lt;%n&gt;\n&quot; constructor-end=&quot;&lt;/%n&gt;\n&quot; encoding=&quot;ISO-8859-1&quot; indent=&quot;  &quot;
 
@@ -262,18 +248,16 @@ print name=dump file-start=&quot;--- File: %f ---\n\n&quot; value=&quot;%n=%v (t
   .
 </pre></div>
 </td></tr></table>
-<p>In this example an ASN.1 DER coded certificate was converted to XML.
+<p>In this example, an ASN.1 DER encoded certificate was converted to XML.
 </p>
 <hr>
-<a name="Invoking-tlve"></a>
-<a name="Invoking-tlve-1"></a>
-<h2 class="chapter">3 Invoking <code>tlve</code></h2>
-<a name="index-invoking"></a>
-<a name="index-version"></a>
-<a name="index-options"></a>
-<a name="index-usage"></a>
-<a name="index-help"></a>
-<a name="index-getting-help"></a>
+<span id="Invoking-tlve"></span><span id="Invoking-tlve-1"></span><h2 class="chapter">3 Invoking <code>tlve</code></h2>
+<span id="index-invoking"></span>
+<span id="index-version"></span>
+<span id="index-options"></span>
+<span id="index-usage"></span>
+<span id="index-help"></span>
+<span id="index-getting-help"></span>
 
 <p>The format for running the <code>tlve</code> program is:
 </p>
@@ -286,7 +270,7 @@ print name=dump file-start=&quot;--- File: %f ---\n\n&quot; value=&quot;%n=%v (t
 <dl compact="compact">
 <dt><code>--configuration=<var>name</var></code></dt>
 <dt><code>-c <var>name</var></code></dt>
-<dd><p>Read configuration from <var>name</var> instead of ~/.tlverc.
+<dd><p>Read configuration from <var>name</var> instead of <samp>~/.tlverc</samp>.
 </p>
 </dd>
 <dt><code>--debug</code></dt>
@@ -296,34 +280,34 @@ print name=dump file-start=&quot;--- File: %f ---\n\n&quot; value=&quot;%n=%v (t
 </dd>
 <dt><code>--name-list=<var>list</var></code></dt>
 <dt><code>-n</code></dt>
-<dd><p>Print only elements having name or tag in comma separated list <var>list</var>. <code>tlve</code> recognises
-the name if it is given with keyword <code>tlv</code> in configuration file. A tag must be enclosed in <code>[ ]</code>.
+<dd><p>Print only elements having a name or tag in the comma-separated list <var>list</var>. <code>tlve</code> recognizes
+the name if it is given with keyword <code>tlv</code> in the configuration file. A tag must be enclosed in <code>[ ]</code>.
 </p>
 </dd>
 <dt><code>--structure=<var>name</var></code></dt>
 <dt><code>-s</code></dt>
-<dd><p>The input data is processed using structure information <var>name</var>. If not given <code>tlve</code> uses structure named
-as <code>default</code>.
+<dd><p>The input data is processed using structure information <var>name</var>. If not given, <code>tlve</code> uses the structure named
+<code>default</code>.
 </p>
 </dd>
 <dt><code>--expression <var>name</var>=<var>value</var></code></dt>
 <dt><code>-e</code></dt>
 <dd><p>Expression can be used to select blocks of elements. 
-A block can be defined by by option <samp>-l,--start-level</samp> and/or <samp>-n,--name</samp>. 
-If <samp>-l</samp> or <samp>-n</samp> is not given, only names appearing in this option are printed. 
-A block is printed if any of given expression evaluates true.
+A block can be defined by option <samp>-l, --start-level</samp> and/or <samp>-n, --name-list</samp>. 
+If <samp>-l</samp> or <samp>-n</samp> is not given, only names appearing in the expression are printed. 
+A block is printed if any given expression evaluates to true.
 </p>
-<p><var>name</var> is name of a primitive element and the expression evaluates true if the contents of the element matches the regular expression in <var>value</var>.
+<p><var>name</var> is the name of a primitive element, and the expression evaluates to true if the contents of the element match the regular expression in <var>value</var>.
 </p>
 </dd>
 <dt><code>--and</code></dt>
 <dt><code>-a</code></dt>
-<dd><p>As default multiple expressions are combined with logical or. If this option is given multiple expressions are combined with logical and.
+<dd><p>By default, multiple expressions are combined with logical OR. If this option is given, multiple expressions are combined with logical AND.
 </p>
 </dd>
 <dt><code>--print=<var>name</var></code></dt>
 <dt><code>-p</code></dt>
-<dd><p>Output is formatted using printing definition <var>name</var>. Default is to use printing definition named as <code>default</code>.
+<dd><p>Output is formatted using printing definition <var>name</var>. The default is to use the printing definition named <code>default</code>.
 </p>
 </dd>
 <dt><code>--output=<var>name</var></code></dt>
@@ -333,23 +317,24 @@ A block is printed if any of given expression evaluates true.
 </dd>
 <dt><code>--start-level=<var>level</var></code></dt>
 <dt><code>-l <var>level</var></code></dt>
-<dd><p>Only elements which are in level <var>level</var> or lower in element hierarchy are printed.  First (highest) level is level number one.  
+<dd><p>Only elements that are at level <var>level</var> or lower in the element hierarchy are printed. The first (highest) level is level number one.  
 </p>
 <p>If <samp>-e, --expression</samp> is used with this option and 
-the expression(s) in level <var>level</var> or in lower levels evaluates true, then all elements in <var>level</var> 
+the expression(s) in level <var>level</var> or in lower levels evaluates to true, then all elements in <var>level</var> 
 or lower levels are printed in that particular hierarchy.
 </p>
-<p>If both this option and <samp>-n, --name</samp> are defined, only names which appear in <var>level</var> or lower levels are printed.
+<p>If both this option and <samp>-n, --name-list</samp> are defined, only names that appear at level <var>level</var> or lower levels are printed.
 </p>
 </dd>
 <dt><code>--stop-level=<var>level</var></code></dt>
 <dt><code>-L <var>level</var></code></dt>
-<dd><p>Only elements which are in level <var>level</var> or higher in element hierarchy are printed.  First level is level number one.  
+<dd><p>Only elements that are at level <var>level</var> or higher in the element hierarchy are printed. The first level is level number one.  
 </p>
-<p>If both this option and <samp>-n, --name</samp> are defined, only names which appear in level <var>level</var> or higher in element hierarchy are printed.
+<p>If both this option and <samp>-n, --name-list</samp> are defined, only names that appear at level <var>level</var> or higher in the element hierarchy are printed.
 </p>
 </dd>
 <dt><code>--help</code></dt>
+<dt><code>-h</code></dt>
 <dt><code>-?</code></dt>
 <dd><p>Print an informative help message describing the options and then exit
 successfully.
@@ -361,37 +346,34 @@ successfully.
 and then exit successfully.
 </p></dd>
 </dl>
-<p>All remaining options are names of input files, if no input files
-are specified or &rsquo;-&rsquo; is given, then the standard input is read.
+<p>All remaining arguments are names of input files. If no input files
+are specified or &rsquo;-&rsquo; is given, standard input is read.
 </p>
 <hr>
-<a name="Configuration"></a>
-<a name="Configure-tlve"></a>
-<h2 class="chapter">4 Configure tlve</h2>
-<a name="index-configuration"></a>
-<p><code>tlve</code> uses a text-based configuration file to process and print input data. Default configuration file
+<span id="Configuration"></span><span id="Configure-tlve"></span><h2 class="chapter">4 Configure tlve</h2>
+<span id="index-configuration"></span>
+<p><code>tlve</code> uses a text-based configuration file to process and print input data. The default configuration file
 is <samp>~/.tlverc</samp>. Configuration is made up of keywords and parameter-value pairs. Comments start with <code>#</code>-character.
 </p>
-<p>Following chapters explain keywords and their meanings.
-</p><a name="tl-_0028tag_002dlength_0029"></a>
-<h4 class="subheading">tl (tag-length)</h4>
+<p>The following sections explain keywords and their meanings.
+</p><span id="tl-_0028tag_002dlength_0029"></span><h4 class="subheading">tl (tag-length)</h4>
 <p><code>tl name=<var>string</var> tag=<var>type</var>,<var>length</var>,<var>mask</var>,<var>shift</var>,<var>offset</var> 
 type=<var>type</var>,<var>length</var>,<var>mask</var>,<var>shift</var>,<var>offset</var>
 length=<var>type</var>,<var>length</var>,<var>mask</var>,<var>shift</var>,<var>offset</var>
 print=<var>name</var> value-term=<var>string</var> tl-included=yes|no type-map=<var>name</var></code>
 <br>
 <br>
-<code>tl</code> is used to specify characteristics of tag-length pair, which is used to parse a tlv file. Parameters and their meanings:
+<code>tl</code> is used to specify characteristics of a tag-length pair used to parse a TLV file. Parameters and their meanings:
 </p><dl compact="compact">
 <dt><code>name=<var>string</var></code></dt>
-<dd><p>Name of this definition, this is used when this definition is referred in other parts of the configuration.
+<dd><p>Name of this definition; used when this definition is referenced in other parts of the configuration.
 </p>
 </dd>
 <dt><code>tag=<var>type</var>,<var>length</var>,<var>mask</var>,<var>shift</var>,<var>offset</var></code></dt>
-<dd><p>Characteristics of tag. Typically a tag is defined by its <var>type</var> (integer, printable string,...) and its <var>length</var>.
+<dd><p>Characteristics of the tag. Typically a tag is defined by its <var>type</var> (integer, printable string, etc.) and its <var>length</var>.
 </p><dl compact="compact">
 <dt><code>type</code></dt>
-<dd><p>Can be any of following: 
+<dd><p>Can be any of the following: 
 </p><dl compact="compact">
 <dt><code>int</code></dt>
 <dt><code>int-be</code></dt>
@@ -417,30 +399,30 @@ print=<var>name</var> value-term=<var>string</var> tl-included=yes|no type-map=<
 </dd>
 <dt><code>length</code></dt>
 <dd><p>The length of the tag as a decimal integer. 
-If the tag and length are separated the separator character can be given in 
-format <var>/c/</var> where <var>c</var> is the character separating tag and length.
+If the tag and length are separated, the separator character can be given in 
+the format <var>/c/</var> where <var>c</var> is the character separating tag and length.
 </p></dd>
 <dt><code>mask</code></dt>
-<dd><p>An integer tag is and-masked with this value. Mask can be given as decimal or hexadecimal integer. Hexadecimal values
+<dd><p>An integer tag is bitwise AND-masked with this value. Mask can be given as decimal or hexadecimal integer. Hexadecimal values
 are given as <code>0xnn</code>. Value zero will not be used.
 </p></dd>
 <dt><code>shift</code></dt>
 <dd><p>An integer tag is bit shifted using this value. If <code>shift</code> is positive, 
-tag will be shifted left, if negative tag will be shifted right.
+the tag will be shifted left; if negative, the tag will be shifted right.
 </p></dd>
 <dt><code>offset</code></dt>
-<dd><p>As default the tag is assumed to be in offset 0 of a tlv triplet. if <code>offset</code> is given, tag will be read
-from position specified by this offset.
+<dd><p>By default, the tag is assumed to be at offset 0 of a TLV triplet. If <code>offset</code> is given, the tag will be read
+from the position specified by this offset.
 </p></dd>
 </dl>
 <p>Only the <code>type</code> and <code>length</code> or <code>value-term</code> are mandatory, all other values are optional. 
-</p>
+</p> 
 </dd>
 <dt><code>type=<var>type</var>,<var>length</var>,<var>mask</var>,<var>shift</var>,<var>offset</var></code></dt>
 <dd><p>If input data contains value encoding information, it can be read using this definition. Input types can be mapped to internal value types using <code>typemap</code>.
 </p><dl compact="compact">
 <dt><code>type</code></dt>
-<dd><p>Can be any of following. <strong>Note</strong>: Integers are always read as unsigned.
+<dd><p>Can be any of the following. <strong>Note</strong>: Integers are always read as unsigned.
 </p><dl compact="compact">
 <dt><code>int</code></dt>
 <dt><code>int-be</code></dt>
@@ -450,9 +432,9 @@ from position specified by this offset.
 <dd><p>Signed integer, little endian.
 </p></dd>
 <dt><code>uint</code></dt>
+<dt><code>uint-be</code></dt>
 <dd><p>Unsigned integer, big endian.
 </p></dd>
-<dt><code>uint-be</code></dt>
 <dt><code>uint-le</code></dt>
 <dd><p>Unsigned integer, little endian.
 </p></dd>
@@ -460,7 +442,7 @@ from position specified by this offset.
 <dd><p>Printable string.
 </p></dd>
 <dt><code>ber</code></dt>
-<dd><p>ASN.1 BER encoded length.
+<dd><p>ASN.1 BER encoded type.
 </p></dd>
 </dl>
 </dd>
@@ -469,26 +451,26 @@ from position specified by this offset.
 the separator character can be given as <var>/c/</var> where <var>c</var> is the character separating the type and the length.
 </p></dd>
 <dt><code>mask</code></dt>
-<dd><p>The type is and-masked with this value. Mask can be given as decimal or hexadecimal integer. Hexadecimal values
+<dd><p>The type is bitwise AND-masked with this value. Mask can be given as decimal or hexadecimal integer. Hexadecimal values
 are given as <code>0xnn</code>. Value zero is not used.
 </p></dd>
 <dt><code>shift</code></dt>
-<dd><p>The type it is bit shifted using this value. If <code>shift</code> is positive, 
-type will be shifted left, if negative type will be shifted right.
+<dd><p>The type is bit shifted using this value. If <code>shift</code> is positive, 
+the type will be shifted left; if negative, the type will be shifted right.
 </p></dd>
 <dt><code>offset</code></dt>
-<dd><p>As default the type is assumed to be positioned right after the tag, If this parameter is given type is read using this offset. 
-<strong>Note</strong>: Offset is relative to the beginning of the tlv triplet, not relative to the end of the tag.
+<dd><p>By default, the type is assumed to be positioned right after the tag. If this parameter is given, the type is read using this offset. 
+<strong>Note</strong>: Offset is relative to the beginning of the TLV triplet, not to the end of the tag.
 </p></dd>
 </dl>
 <p>Only the <code>type</code> is mandatory, all other values are optional.
 </p>
 </dd>
 <dt><code>length=<var>type</var>,<var>length</var>,<var>mask</var>,<var>shift</var>,<var>offset</var></code></dt>
-<dd><p>Characteristics of length. Typically a length is defined by its <var>type</var> (integer, printable string,...) and its <var>length</var>.
+<dd><p>Characteristics of the length. Typically a length is defined by its <var>type</var> (integer, printable string, etc.) and its <var>length</var>.
 </p><dl compact="compact">
 <dt><code>type</code></dt>
-<dd><p>Can be any of following. <strong>Note</strong>: Integers are always read as unsigned.
+<dd><p>Can be any of the following. <strong>Note</strong>: Integers are always read as unsigned.
 </p><dl compact="compact">
 <dt><code>int</code></dt>
 <dt><code>int-be</code></dt>
@@ -498,9 +480,9 @@ type will be shifted left, if negative type will be shifted right.
 <dd><p>Signed integer, little endian.
 </p></dd>
 <dt><code>uint</code></dt>
+<dt><code>uint-be</code></dt>
 <dd><p>Unsigned integer, big endian.
 </p></dd>
-<dt><code>uint-be</code></dt>
 <dt><code>uint-le</code></dt>
 <dd><p>Unsigned integer, little endian.
 </p></dd>
@@ -517,16 +499,16 @@ type will be shifted left, if negative type will be shifted right.
 the separator character can be given as <var>/c/</var> where <var>c</var> is the character separating the length and value.
 </p></dd>
 <dt><code>mask</code></dt>
-<dd><p>The length is and-masked with this value. Mask can be given as decimal or hexadecimal integer. Hexadecimal values
+<dd><p>The length is bitwise AND-masked with this value. Mask can be given as decimal or hexadecimal integer. Hexadecimal values
 are given as <code>0xnn</code>. Value zero is not used.
 </p></dd>
 <dt><code>shift</code></dt>
-<dd><p>The length it is bit shifted using this value. If <code>shift</code> is positive, 
-length will be shifted left, if negative length will be shifted right.
+<dd><p>The length is bit shifted using this value. If <code>shift</code> is positive, 
+the length will be shifted left; if negative, the length will be shifted right.
 </p></dd>
 <dt><code>offset</code></dt>
-<dd><p>As default the length is assumed to be positioned right after the tag (or type if defined), If this parameter is given length is read using this offset. 
-<strong>Note</strong>: Offset is relative to the beginning of the tlv triplet, not relative to the end of the tag.
+<dd><p>By default, the length is assumed to be positioned right after the tag (or type, if defined). If this parameter is given, the length is read using this offset. 
+<strong>Note</strong>: Offset is relative to the beginning of the TLV triplet, not to the end of the tag.
 </p></dd>
 </dl>
 <p>Only the <code>type</code> is mandatory, all other values are optional.
@@ -537,19 +519,18 @@ length will be shifted left, if negative length will be shifted right.
 </p>
 </dd>
 <dt><code>value-term=<var>string</var></code></dt>
-<dd><p>The length will not be used. Instead the value is terminated by <var>string</var>. <var>string</var> is not considered as a part of the value. This parameter and <code>length</code> are mutually exclusive. 
+<dd><p>The length field will not be used. Instead, the value is terminated by <var>string</var>. <var>string</var> is not considered part of the value. This parameter and <code>length</code> are mutually exclusive. 
 </p>
 </dd>
 <dt><code>tl-included=yes|no</code></dt>
-<dd><p>The tag-length part is included/not included in length. Default is value is no, meaning that the length contains only the length of the value part of tlv triplet.
+<dd><p>Specifies whether the tag-length part is included in the length. The default value is no, meaning that length contains only the length of the value part of the TLV triplet.
 </p></dd>
 <dt><code>type-map=<var>name</var></code></dt>
 <dd><p>Mapping of input data types to internal types is done using mappings in <code>typemap</code> definition <var>name</var>.
 </p></dd>
 </dl>
 
-<a name="typemap"></a>
-<h4 class="subheading">typemap</h4>
+<span id="typemap"></span><h4 class="subheading">typemap</h4>
 <p><code>
 typemap name=<var>string</var> <br>
 map &hellip; <br>
@@ -564,7 +545,7 @@ typemap-end
 <br>
 </p><dl compact="compact">
 <dt><code>name=<var>string</var></code></dt>
-<dd><p>The name of a typemap. This name is used when referring to this item in other parts of configuration
+<dd><p>The name of a typemap. This name is used when referring to this item in other parts of the configuration.
 </p></dd>
 </dl>
 <p><code>typemap</code> is used to map input value types to tlve&rsquo;s internal value types. Input value type can be defined in <code>tl</code> with keyword <code>type</code>.
@@ -575,37 +556,36 @@ typemap-end
 <dd><p>If <var>string</var> is found as input data type it is mapped to internal value type defined by parameter <var>value-type</var>.
 </p></dd>
 <dt><code>value-type=int|int-be|int-le|uint|uint-be|uint-le|string|hex|hexs|dec|bcd|bcds|oid|bit-string|escaped</code></dt>
-<dd><p>This value is used in formatting the value for printing. See the meanings of different value types in next chapter.
+<dd><p>This value is used in formatting the value for printing. See the descriptions of the different value types in the next section.
 </p></dd>
 </dl>
 
-<a name="tlv-_0028tag_002dlength_002dvalue_0029"></a>
-<h4 class="subheading">tlv (tag-length-value)</h4>
+<span id="tlv-_0028tag_002dlength_002dvalue_0029"></span><h4 class="subheading">tlv (tag-length-value)</h4>
 <p><code>tlv name=<var>string</var> tag=<var>string</var> end-tag=<var>string</var>  path=<var>string</var> type=constructed|primitive|end-of-content
 <span class="nolinebreak">value-type=int|int-be|int-le|uint|uint-be|uint-le|string|hex|hexs|dec|bcd|bcds|oid|bit-string|escaped</span><!-- /@w -->
 content-tl=<var>name</var> print=<var>name</var> encoding=<var>name</var>
 form=definite|indefinite format=<var>string</var> value-length-adjust=<var>integer</var> maybe-constructed=yes|no hold=yes|no|<var>name</var></code> 
 <br>
 <br>
-<code>tlv</code> is used to specify characteristics of one tlv triplet by mapping additional info to it using the parameter <code>tag</code> as a key.
+<code>tlv</code> is used to specify characteristics of a TLV triplet by mapping additional info to it using the parameter <code>tag</code> as a key.
 <code>tlv</code> is only used inside the <code>structure</code> definition (see below). Parameters and their meanings:
 </p><dl compact="compact">
 <dt><code>name=<var>string</var></code></dt>
 <dd><p>The name of a triplet. This name is used when referring to this item in other parts of configuration or in command line
-(options <samp>-n, --name-list</samp> and <samp>-e, --espression</samp>). 
+(options <samp>-n, --name-list</samp> and <samp>-e, --expression</samp>). 
 <var>string</var> is printed using the printing directive <code>%n</code>.
 </p></dd>
 <dt><code>tag=<var>string</var></code></dt>
-<dd><p><var>string</var> is used as a key when mapping tlv triplet from input to this definition. ASN.1 BER tags are given in form <code>X-n</code> where
-<code>X</code> is the class of tag: U,A,C or P for Universal, Application, Context-specific or Private type of BER-tag. <code>n</code> is decimal number.
+<dd><p><var>string</var> is used as a key when mapping tlv triplet from input to this definition. ASN.1 BER tags are given in the form <code>X-n</code>, where
+<code>X</code> is the tag class (U, A, C, or P for Universal, Application, Context-specific, or Private BER tags) and <code>n</code> is a decimal number.
 </p></dd>
 <dt><code>end-tag=<var>string</var></code></dt>
-<dd><p>If given, the <var>string</var> from the parameter <code>tag</code> and <var>string</var> from this parameter are considered as value range when mapping 
+<dd><p>If given, the <var>string</var> from the parameter <code>tag</code> and <var>string</var> from this parameter are considered as a value range when mapping 
 tlv triplets to this definition.
 </p></dd>
 <dt><code>path=<var>string</var></code></dt>
-<dd><p>Only tlv triplets which have path <var>string</var> are mapped to this definition. Path is dot separated list of constructor element names or tags
-which are preceding this element in constructor hierarchy. If name is not given for a constructor the tag enclosed in <code>[ ]</code> is used. If path starts with asterisk (<code>*</code>) then only the rest of the path must match with the current path.
+<dd><p>Only TLV triplets matching path <var>string</var> are mapped to this definition. The path is a dot-separated list of constructor element names or tags
+that precede this element in the constructor hierarchy. If a name is not given for a constructor, the tag enclosed in <code>[ ]</code> is used. If the path starts with an asterisk (<code>*</code>), only the remainder of the path needs to match the current path.
 </p></dd>
 <dt><code>type=constructed|primitive|end-of-content</code></dt>
 <dd><p>The role of this element in tlv hierarchy. 
@@ -614,16 +594,16 @@ which are preceding this element in constructor hierarchy. If name is not given 
 <dd><p>Element contains one or several other elements, not a single value.
 </p></dd>
 <dt><code>primitive</code></dt>
-<dd><p>Element  contains a single value, this is the default type.
+<dd><p>Element contains a single value; this is the default type.
 </p></dd>
 <dt><code>end-of-content</code></dt>
-<dd><p>Elements role is to indicate the end of constructed data. This is normally used when constructor has no given length.
+<dd><p>The element&rsquo;s role is to indicate the end of constructed data. This is normally used when a constructor has indefinite length.
 These elements are not printed.
 </p></dd>
 </dl>
 </dd>
 <dt><code>value-type=int|int-be|int-le|uint|uint-be|uint-le|string|hex|hexs|dec|bcd|bcds|oid|bit-string|escaped</code></dt>
-<dd><p>Type of the value. Default is to use value type from <code>typemap</code> or if that is not used then <code>escaped</code> is used.
+<dd><p>Type of the value. The default is to use the value type from <code>typemap</code>; if that is not defined, <code>escaped</code> is used.
 </p><dl compact="compact">
 <dt><code>int</code></dt>
 <dt><code>int-be</code></dt>
@@ -646,49 +626,49 @@ These elements are not printed.
 <dd><p>Value bytes are printed as hexadecimal numbers.
 </p></dd>
 <dt><code>hexs</code></dt>
-<dd><p>Value bytes are printed  as hexadecimal numbers with half bytes swapped.
+<dd><p>Value bytes are printed as hexadecimal numbers with half-bytes (nibbles) swapped.
 </p></dd>
 <dt><code>dec</code></dt>
-<dd><p>Value bytes are printed as space separated decimal numbers
+<dd><p>Value bytes are printed as space-separated decimal numbers.
 </p></dd>
 <dt><code>bcd</code></dt>
 <dd><p>Value contains a bcd number.
 </p></dd>
 <dt><code>bcds</code></dt>
-<dd><p>Value contains a bcd number with half bytes swapped.
+<dd><p>Value contains a bcd number with half-bytes (nibbles) swapped.
 </p></dd>
 <dt><code>oid</code></dt>
-<dd><p>Value contains an ASN.1 object identifier. Sub-identifiers are printed as space separated decimal values. 
+<dd><p>Value contains an ASN.1 object identifier. Sub-identifiers are printed as space-separated decimal values. 
 </p></dd>
 <dt><code>bit-string</code></dt>
 <dd><p>Value bits are printed in groups of eight. For non ASN.1 data all bytes are printed. For ASN.1 bit-string
-the first byte contains the number of non printable bits of the last byte and it is not printed.
+the first byte contains the number of non-printable bits of the last byte and it is not printed.
 </p></dd>
 <dt><code>escaped</code></dt>
-<dd><p>Value is printed as string, except non printable characters are printed as <code>\xnn</code>, where <code>nn</code> is the hexadecimal value of a character.
+<dd><p>Value is printed as string, except non-printable characters are printed as <code>\xnn</code>, where <code>nn</code> is the hexadecimal value of a character.
 </p></dd>
 </dl>
 </dd>
 <dt><code>content-tl=<var>name</var></code></dt>
-<dd><p>Valid for constructor type elements only. tlv triplets inside this constructor are read using tl definition <var>name</var>.
-This makes it possible to a single file have different tlv encoding in different levels of constructor hierarchy.
+<dd><p>Valid for constructor-type elements only. TLV triplets inside this constructor are read using the tl definition <var>name</var>.
+This makes it possible for a single file to have different TLV encodings at different levels of the constructor hierarchy.
 </p></dd>
 <dt><code>print=<var>name</var></code></dt>
-<dd><p>Printing is done according printing definition <var>name</var>.
+<dd><p>Printing is done according to printing definition <var>name</var>.
 </p></dd>
 <dt><code>encoding=<var>name</var></code></dt>
-<dd><p>The value part of tlv triplet has encoding <var>name</var>. Before printing the value (printing directive <code>%v</code>) the contents
-of the value is converted to system encoding (default) or encoding specified in printing definition. For more information about
-encoding see &lsquo;<samp>man&nbsp;iconv</samp>&rsquo;<!-- /@w -->.
+<dd><p>The value part of the TLV triplet has encoding <var>name</var>. Before printing the value (printing directive <code>%v</code>), the content
+of the value is converted to the system encoding (default) or the encoding specified in the printing definition. For more information about
+encodings, see &lsquo;<samp>man&nbsp;iconv</samp>&rsquo;<!-- /@w -->.
 </p></dd>
 <dt><code>form=definite|indefinite</code></dt>
 <dd><p>Valid for constructor type elements only:
 </p><dl compact="compact">
 <dt><code>definite</code></dt>
-<dd><p>Use constructor elements length to detect the end of constructed content.
+<dd><p>Use constructor element&rsquo;s length to detect the end of constructed content.
 </p></dd>
 <dt><code>indefinite</code></dt>
-<dd><p>Constructed element ends when a end-of-content element is found. 
+<dd><p>Constructed element ends when an end-of-content element is found. 
 </p></dd>
 </dl>
 </dd>
@@ -696,13 +676,13 @@ encoding see &lsquo;<samp>man&nbsp;iconv</samp>&rsquo;<!-- /@w -->.
 <dd><p><var>string</var> is a printf-style printing directive for integer values. Integers are handled as 
 <code>long long int</code> and the default formats are  <code>%lli</code> and  <code>%llu</code>.
 If <var>string</var> starts with <code>+</code> or <code>++</code> the rest of the <var>string</var> is considered as
-format string for <code>strftime()</code> function and the value is considered to be UNIX time. If single <code>+</code>
-is given time is formatted as local time, if <code>++</code> is given the time is formatted as UTC time.
+format string for <code>strftime()</code> function and the value is considered to be UNIX time. If a single <code>+</code>
+is given, time is formatted as local time; if <code>++</code> is given, time is formatted as UTC time.
 </p></dd>
 <dt><code>value-length-adjust=<var>integer</var></code></dt>
 <dd><p>Before reading the value from input, the length of the value is adjusted as <code>length = length + <var>integer</var></code>.
-<var>integer</var> can be negative allowing reading less data as expressed by the length in tl data.
-<strong>Note</strong>: length consumed by the tlv triplet is not affected by this parameter.
+<var>integer</var> can be negative, allowing reading less data than expressed by the length in the tl data.
+<strong>Note</strong>: The length consumed by the TLV triplet is not affected by this parameter.
 </p></dd>
 <dt><code>maybe-constructed=yes|no</code></dt>
 <dd><p>If an element is a primitive type by default and this is set as <code>yes</code>, then <code>tlve</code> first checks 
@@ -711,19 +691,18 @@ by the tl pair matches the total length of this element. If this is true the ele
 element. Default is <code>no</code>.
 </p></dd>
 <dt><code>hold=yes|no|<var>name</var></code></dt>
-<dd><p>If <code>yes</code> or <var>name</var> the value part of a primitive element or the name of a constructed element is put in hold. 
-The value in hold can be printed using notation <code>$</code><var>name</var>, where <var>name</var> is
-the name of the tlv triplet or an alias name given by <var>name</var>. Only the latest value encountered is saved. Several
+<dd><p>If <code>yes</code> or <var>name</var>, the value part of a primitive element or the name of a constructed element is put on hold. 
+The value on hold can be printed using the notation <code>$</code><var>name</var>, where <var>name</var> is
+the name of the TLV triplet or an alias name given by <var>name</var>. Only the latest value encountered is saved. Several
 different elements can share the same alias name.
-This can be used to save the value or the name for later printing. Default is no.
+This can be used to save the value or the name for later printing. The default is no.
 </p></dd>
 </dl>
 <p>Only parameters <code>name</code> and <code>tag</code> are mandatory.
 </p>    
-<a name="structure"></a>
-<h4 class="subheading">structure</h4>
-<p>Structure is a multi-line configuration element, which specifies basic characteristics of a tlv input file. 
-Structure can contain multiple <code>tlv</code> keywords.
+<span id="structure"></span><h4 class="subheading">structure</h4>
+<p>Structure is a multi-line configuration element that specifies the basic characteristics of a TLV input file. 
+A structure can contain multiple <code>tlv</code> keywords.
 <br>
 <code>
 structure name=<var>name</var> content-tl=<var>name</var> print=<var>name</var> filler=<var>string</var> hex-caps=yes|no <br>
@@ -739,29 +718,28 @@ structure-end
 <br>
 </p><dl compact="compact">
 <dt><code>name=<var>name</var></code></dt>
-<dd><p>A name for structure. This is the name which should be given with option <samp>-s, --structure</samp>.
+<dd><p>The name of the structure. This is the name that should be given with the <samp>-s, --structure</samp> option.
 </p></dd>
 <dt><code>content-tl=<var>name</var></code></dt>
-<dd><p>A name of a tl definition. tlv triplets are read using this information.
+<dd><p>The name of a tl definition. TLV triplets are read using this information.
 </p></dd>
 <dt><code>print=<var>name</var></code></dt>
-<dd><p>Elements in this structure are printed using printing definition <var>name</var>, default is to use printing definition named as &rsquo;default&rsquo;. 
+<dd><p>Elements in this structure are printed using printing definition <var>name</var>; the default is to use the printing definition named <code>default</code>. 
 This can be overridden using different names for <code>print</code> in <code>tl</code> or <code>tlv</code> keywords.
 </p></dd>
 <dt><code>filler=<var>string</var></code></dt>
-<dd><p><var>string</var>s are skipped when reading the input. 
-Non printable characters can be escaped as <code>\xnn</code>, where <code>nn</code> is characters hexadecimal value.
+<dd><p>Occurrences of <var>string</var> are skipped when reading the input. 
+Non-printable characters can be escaped as <code>\xnn</code>, where <code>nn</code> is the character&rsquo;s hexadecimal value.
 </p></dd>
 <dt><code>hex-caps=yes|no</code></dt>
-<dd><p>if set as <code>yes</code> then the hexadecimal values are printed in capital letters.
+<dd><p>If set to <code>yes</code>, hexadecimal values are printed in uppercase.
 </p></dd>
 </dl>
-<p>After <code>structure</code> keyword there can be any number of <code>tlv</code> keywords, <code>structure</code> definition is
-ended by <code>structure-end</code> keyword. Only parameters <code>name</code> and <code>content-tl</code> are mandatory.
+<p>After the <code>structure</code> keyword, there can be any number of <code>tlv</code> keywords; the <code>structure</code> definition is
+ended by the <code>structure-end</code> keyword. Only parameters <code>name</code> and <code>content-tl</code> are mandatory.
 </p>
-<a name="print"></a>
-<h4 class="subheading">print</h4>
-<p>Keyword <code>print</code> specifies how to print tlv triplets in text-based formats.
+<span id="print"></span><h4 class="subheading">print</h4>
+<p>The <code>print</code> keyword specifies how to print TLV triplets in text-based formats.
 <br>
 <code>print name=<var>string</var> file-start=<var>string</var> file-end=<var>string</var> constructor=<var>string</var> 
 constructor-end=<var>string</var> value=<var>string</var> indent=<var>string</var> encoding=<var>name</var>
@@ -770,8 +748,8 @@ block-start=<var>string</var> block-end=<var>string</var> separator=<var>char</v
 <br>
 </p><dl compact="compact">
 <dt><code>name=<var>string</var></code></dt>
-<dd><p>A name for this printing definition. This name can be referred in other parts of the configuration or 
-with option <samp>-p, --print</samp>.
+<dd><p>A name for this printing definition. This name can be referenced in other parts of the configuration or 
+with the <samp>-p, --print</samp> option.
 </p></dd>
 <dt><code>file-start=<var>string</var></code></dt>
 <dd><p>Output <var>string</var> for every input file before processing the file.
@@ -786,69 +764,68 @@ with option <samp>-p, --print</samp>.
 <dd><p><var>string</var> is printed after the last element of a constructor type element has been printed.
 </p></dd>
 <dt><code>value=<var>string</var></code></dt>
-<dd><p><var>string</var> is printed for each primitive tlv triplet
+<dd><p><var>string</var> is printed for each primitive TLV triplet.
 </p></dd>
 <dt><code>indent=<var>string</var></code></dt>
 <dd><p><var>string</var> is printed <var>n</var> times  before any other data.
 <var>n</var> is the depth of the constructor hierarchy. Default is not to indent.
 </p></dd>
 <dt><code>encoding=<var>name</var></code></dt>
-<dd><p>If the value to be printed has a <code>encoding</code> parameter in <code>tlv</code>, the <var>name</var>
-is used as target encoding. Default is to used system encoding (which can be checked by <code>tlve -V</code>).
+<dd><p>If the value to be printed has an <code>encoding</code> parameter in <code>tlv</code>, <var>name</var>
+is used as the target encoding. The default is to use the system encoding (which can be checked with <code>tlve -V</code>).
 </p></dd>
 <dt><code>block-start=<var>string</var></code></dt>
-<dd><p><var>string</var> is printed before a group of elements found using expression (<samp>-e,--expression</samp>) 
-and/or start level (<samp>-l,--start-level</samp>) is printed. <strong>Note</strong>: <var>string</var> is not printed
-if group of elements found is empty.
+<dd><p><var>string</var> is printed before a group of elements found using expressions (<samp>-e, --expression</samp>) 
+and/or start level (<samp>-l, --start-level</samp>) is printed. <strong>Note</strong>: <var>string</var> is not printed
+if the group of elements found is empty.
 </p></dd>
 <dt><code>block-end=<var>string</var></code></dt>
-<dd><p><var>string</var> is printed after a group of elements found using expression (<samp>-e,--expression</samp>)
-and/or start level (<samp>-l,--start-level</samp>) is printed. <strong>Note</strong>: <var>string</var> is not printed
-if group of elements found is empty.
+<dd><p><var>string</var> is printed after a group of elements found using expressions (<samp>-e, --expression</samp>)
+and/or start level (<samp>-l, --start-level</samp>) is printed. <strong>Note</strong>: <var>string</var> is not printed
+if the group of elements found is empty.
 </p></dd>
 <dt><code>separator=<var>char</var></code></dt>
 <dd><p><var>char</var> is printed after every primitive element except the last one in a group of elements 
-found using expression (<samp>-e,--expression</samp>) and/or start level (<samp>-l,--start-level</samp>).
+found using expressions (<samp>-e, --expression</samp>) and/or start level (<samp>-l, --start-level</samp>).
 </p></dd>
 </dl>
-<a name="printf_002dstyle-directives"></a>
-<h4 class="subsubheading">printf-style directives</h4>
-<p><var>string</var> used in parameters for <code>print</code> can contain following printf-style directives:
+<span id="printf_002dstyle-directives"></span><h4 class="subsubheading">printf-style directives</h4>
+<p>The <var>string</var> used in parameters for <code>print</code> can contain the following printf-style directives:
 </p><dl compact="compact">
 <dt><code>%%</code></dt>
-<dd><p>Print single %.
+<dd><p>Print a single %.
 </p></dd>
 <dt><code>%$</code></dt>
-<dd><p>Print single $.
+<dd><p>Print a single $.
 </p></dd>
 <dt><code>%&gt;</code></dt>
-<dd><p>Print the current level of the element hierarchy, first (highest) level is 1.
+<dd><p>Print the current level of the element hierarchy; the first (highest) level is 1.
 </p></dd>
 <dt><code>%l</code></dt>
-<dd><p>Print the length of the value part of the tlv triplet.
+<dd><p>Print the length of the value part of the TLV triplet.
 </p></dd>
 <dt><code>%c</code></dt>
-<dd><p>Print the number of bytes consumed by the tlv triplet.
+<dd><p>Print the number of bytes consumed by the TLV triplet.
 </p></dd>
 <dt><code>%t</code></dt>
-<dd><p>Print the tag of the tlv triplet.
+<dd><p>Print the tag of the TLV triplet.
 </p></dd>
 <dt><code>%n</code></dt>
-<dd><p>Print the name (given by the <code>tlv</code> keyword) of the tlv triplet. If the tlv triplet cannot be associated with 
+<dd><p>Print the name (given by the <code>tlv</code> keyword) of the TLV triplet. If the TLV triplet cannot be associated with 
 any of the <code>tlv</code> keywords in <code>structure</code> definition, then
 the tag enclosed in <code>[ ]</code> is printed.
 </p></dd>
 <dt><code>%v</code></dt>
-<dd><p>Print the value part of the tlv triplet. Before printing possible character set conversion is performed.
+<dd><p>Print the value part of the TLV triplet. Before printing, character set conversion is performed if applicable.
 </p></dd>
 <dt><code>%p</code></dt>
-<dd><p>Current constructor path is printed. <strong>Note</strong>: This is not printed if option <samp>-e, --expression</samp> is used.
+<dd><p>The current constructor path is printed. <strong>Note</strong>: This is not printed if option <samp>-e, --expression</samp> is used.
 </p></dd>
 <dt><code>%o</code></dt>
-<dd><p>Print the current input file offset. Offset is the start of the current tlv triplet.
+<dd><p>Print the current input file offset. Offset is the start of the current TLV triplet.
 </p></dd>
 <dt><code>%O</code></dt>
-<dd><p>Print the total offset calculated for all input files. Offset is the start of the current tlv triplet.
+<dd><p>Print the total offset calculated for all input files. Offset is the start of the current TLV triplet.
 </p></dd>
 <dt><code>%f</code></dt>
 <dd><p>Print the current file name.
@@ -857,64 +834,58 @@ the tag enclosed in <code>[ ]</code> is printed.
 <dd><p>Print the current structure name.
 </p></dd>
 <dt><code>%d</code></dt>
-<dd><p>Print the hex dump of the tag-length part in format <code>xnnxnn&hellip;</code>. <code>nn</code> is the hexadecimal value
+<dd><p>Print the hex dump of the tag-length part in the format <code>xnnxnn&hellip;</code>, where <code>nn</code> is the hexadecimal value
 of an octet.
 </p></dd>
 <dt><code>%D</code></dt>
-<dd><p>Print the hex dump of the value part in format <code>xnnxnn&hellip;</code>. <code>nn</code> is the hexadecimal value
+<dd><p>Print the hex dump of the value part in the format <code>xnnxnn&hellip;</code>, where <code>nn</code> is the hexadecimal value
 of an octet.
 </p></dd>
 </dl>
-<p><var>string</var> can also contain following escape codes:
+<p>The <var>string</var> can also contain the following escape codes:
 <code>\a</code>, <code>\b</code>, <code>\t</code>, <code>\n</code>, <code>\v</code>, <code>\f</code>, <code>\r</code>, <code>\&quot;</code> and <code>\#</code>.
-A backslash can be escaped as <code>\\</code>. If <var>string</var> contains white-space characters <var>string</var> must be 
-enclosed in double quotation marks <code>&quot;</code>.
-Non printable characters can be escaped as <code>\xnn</code>, where <code>nn</code> is characters hexadecimal value.
-</p><a name="Hold-variables"></a>
-<h4 class="subsubheading">Hold variables</h4>
-<p>If elements is put in &quot;hold&quot; (parameter <var>hold</var> in tlv-keyword), 
-then the value of a primitive element or the name of a constructed element can be printed in <var>string</var>s 
-using notation
+A backslash can be escaped as <code>\\</code>. If <var>string</var> contains whitespace characters, <var>string</var> must be 
+enclosed in double quotation marks (<code>&quot;</code>).
+Non-printable characters can be escaped as <code>\xnn</code>, where <code>nn</code> is the character&rsquo;s hexadecimal value.
+</p><span id="Hold-variables"></span><h4 class="subsubheading">Hold variables</h4>
+<p>If an element is put on &quot;hold&quot; (parameter <var>hold</var> in the <code>tlv</code> keyword), 
+then the value of a primitive element or the name of a constructed element can be printed in <var>string</var> 
+using the notation
 <br>
 <br>
 <code>$</code><var>name</var>
 <br>
 <br>
-where the <var>name</var> is the name of the tlv triplet or the alias name. 
-Tlve prints always the latest encountered value or name of the <var>name</var>. 
-This can be used e.g. to save a value from the beginning of the file to be printed with later found elements.
-</p><a name="Input-Preprocessor"></a>
-<h4 class="subheading">Input Preprocessor</h4>
-<p>It is possible to define an input preprosessor for <code>tlve</code>. An input preprocessor is simply an executable program
-which writes the contents of the input file to standard output which will be read by <code>tlve</code>. If the input preprosessor
-does not write any characters on its standard output, then <code>tlve</code> uses the original file.
+where <var>name</var> is the name of the TLV triplet or the alias name. 
+<code>tlve</code> always prints the latest encountered value or name of <var>name</var>. 
+This can be used, for example, to save a value from the beginning of the file to be printed with elements found later.
+</p><span id="Input-Preprocessor"></span><h4 class="subheading">Input Preprocessor</h4>
+<p>It is possible to define an input preprocessor for <code>tlve</code>. An input preprocessor is an executable program
+that writes the contents of the input file to standard output, which is then read by <code>tlve</code>. If the input preprocessor
+does not write any characters to its standard output, then <code>tlve</code> uses the original file.
 </p>
 <p>To set up an input preprocessor, set the <code>TLVEOPEN</code> environment variable to a command line which will invoke your input preprocessor.
 This command line should include  one  occurrence  of  the string <code>%s</code>, which will be replaced by the input filename when the input preprocessor command is invoked.
 </p>
 <p>The input preprocessor is not used if <code>tlve</code> is reading standard input.
 </p>
-<p>Convenient way is to use <code>lesspipe</code> (or <code>lesspipe.sh</code>), which is availabe in many UNIX-systems, for example
+<p>A convenient way is to use <code>lesspipe</code> (or <code>lesspipe.sh</code>), which is available on many UNIX systems, for example:
 <br>
 </p><div class="example">
 <pre class="example">export TLVEOPEN=&quot;/usr/bin/lesspipe %s&quot;
 </pre></div>
 
-<p>Using the example above is it possible to give a zipped input file to <code>tlve</code>, then the input processor will unzip the file before it is processed by <code>tlve</code>.
+<p>Using the example above, it is possible to pass a compressed input file to <code>tlve</code>; the input preprocessor decompresses the file before it is processed by <code>tlve</code>.
 </p>
 <hr>
-<a name="Examples"></a>
-<a name="How-to-use-tlve"></a>
-<h2 class="chapter">5 How to use tlve</h2>
-<a name="index-example"></a>
-<p>Examples of rc-files can be found in <code>tlve</code> package.
+<span id="Examples"></span><span id="How-to-Use-tlve"></span><h2 class="chapter">5 How to Use tlve</h2>
+<span id="index-example"></span>
+<p>Examples of rc-files can be found in the <code>tlve</code> package.
 </p>
 <hr>
-<a name="Problems"></a>
-<a name="Reporting-Bugs"></a>
-<h2 class="chapter">6 Reporting Bugs</h2>
-<a name="index-bugs"></a>
-<a name="index-problems"></a>
+<span id="Problems"></span><span id="Reporting-Bugs"></span><h2 class="chapter">6 Reporting Bugs</h2>
+<span id="index-bugs"></span>
+<span id="index-problems"></span>
 
 <p>If you find a bug in <code>tlve</code>, please send electronic mail to
 <a href="mailto:tjsa@iki.fi">tjsa@iki.fi</a>.  Include the version number, which you can find by
@@ -926,17 +897,17 @@ output that the program produced and the output you expected.
 <a href="mailto:tjsa@iki.fi">tjsa@iki.fi</a>.  The author will try to help you out, although he
 may not have time to fix your problems.
 </p>
-<a name="SEC_Contents"></a>
+<span id="SEC_Contents"></span>
 <h2 class="contents-heading">Table of Contents</h2>
 
 <div class="contents">
 <ul class="no-bullet">
-<li><a name="toc-Overview-1" href="#Overview">1 Overview</a></li>
-<li><a name="toc-Sample-Output" href="#Sample">2 Sample Output</a></li>
-<li><a name="toc-Invoking-tlve-1" href="#Invoking-tlve">3 Invoking <code>tlve</code></a></li>
-<li><a name="toc-Configure-tlve" href="#Configuration">4 Configure tlve</a></li>
-<li><a name="toc-How-to-use-tlve" href="#Examples">5 How to use tlve</a></li>
-<li><a name="toc-Reporting-Bugs" href="#Problems">6 Reporting Bugs</a></li>
+<li><a id="toc-Overview-1" href="#Overview">1 Overview</a></li>
+<li><a id="toc-Sample-Output" href="#Sample">2 Sample Output</a></li>
+<li><a id="toc-Invoking-tlve-1" href="#Invoking-tlve">3 Invoking <code>tlve</code></a></li>
+<li><a id="toc-Configure-tlve" href="#Configuration">4 Configure tlve</a></li>
+<li><a id="toc-How-to-Use-tlve" href="#Examples">5 How to Use tlve</a></li>
+<li><a id="toc-Reporting-Bugs" href="#Problems">6 Reporting Bugs</a></li>
 
 </ul>
 </div>

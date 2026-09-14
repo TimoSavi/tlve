@@ -107,7 +107,7 @@ update_levels(size_t size)
     }
 }
 
-/* checks is there is size lefth for definite element
+/* checks if there is size left for a definite element
  */
 static int
 enough_size(size_t size)
@@ -119,14 +119,14 @@ enough_size(size_t size)
     return 1;
 }
 
-/* a  constructor has been found make go deeper one level 
+/* a constructor has been found; descend one level deeper
  */
 static void
 level_down(FILE_OFFSET size,struct tlvdef *tlv,TYPE form)
 {
     if(!enough_size(size)) buffer_error("Constructed element is larger than space left in parent element",&new);
     current_level++;
-    if(current_level == MAX_LEVEL + FIRST_LEVEL) panic("Maximun number of levels reached",NULL,NULL);
+    if(current_level == MAX_LEVEL + FIRST_LEVEL) panic("Maximum number of levels reached",NULL,NULL);
     levels[current_level].size = size;
     levels[current_level].form = form;
     if(tlv != NULL && (tlv->content_tl != NULL))              // use tl from tlv if defined
@@ -139,7 +139,7 @@ level_down(FILE_OFFSET size,struct tlvdef *tlv,TYPE form)
 }
 
 
-/* a  end of level has been found make go up one level 
+/* end of level has been found; ascend one level
  */
 static void
 level_up()
@@ -387,7 +387,7 @@ format_dec_string(char *target,BUFFER *source, size_t length)
 }
 
 
-/* Format escaped, non printabled characters are printed as \xnn
+/* Format escaped; non-printable characters are printed as \xnn
  */
 static void
 format_escaped(char *target,BUFFER *source, size_t length)
@@ -964,7 +964,7 @@ read_value(struct tlvitem *tlvi)
 
    }
 
-   /* check how must data should be reserved for converted value */
+   /* check how much data should be reserved for converted value */
    switch(type)
    {
        case T_INTBE:
@@ -1108,8 +1108,8 @@ read_tl(struct tlvitem *i)
     return i->raw_tl_length;
 }
 
-/* checks if the current content is actually a constructed item
-   this is chekked by read tag and length from the begining 
+/* checks if the current content is actually a constructed item;
+   this is checked by reading tag and length from the beginning 
 
    if tag and length are found AND the length + bytes consumed for tag/length
    are the same as the content size then we may have a constructed item
@@ -1140,7 +1140,7 @@ maybe_constructed(TYPE tag_type,char *tag,FILE_OFFSET *length)
         if(result && (FILE_OFFSET) (dummy.raw_tl_length + dummy.length + 1) == *length)
         {
             tl_buffer_read(1);             //  move one byte to forward to read constructed element
-            (*length)--;                     //  and remove the byte from the elements length, argh...
+            (*length)--;                     //  and remove the byte from the element's length, argh...
             return 1;
         }
     } else if(read_tl(&dummy))
@@ -1152,14 +1152,14 @@ maybe_constructed(TYPE tag_type,char *tag,FILE_OFFSET *length)
 }
 
 
-/* parse one tlv triplet, return pointer the tlvitem if parse ok, NULL if end of file
+/* parse one TLV triplet; return pointer to tlvitem if parse ok, NULL if end of file
    write tag, length and actual value to tlvitem structure 'new'
 */
 struct tlvitem *
 parse_tlv()
 {
     buffer(B_FLUSH,0);              // try to make sure that there is at least something to read in buffer and this ensures that
-                                    // the end of file can be recogniced with buffer_eof, in following steps
+                                    // the end of file can be recognized with buffer_eof, in following steps
     
     if(buffer_eof()) return NULL;   // check end of file
 

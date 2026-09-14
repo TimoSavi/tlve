@@ -39,7 +39,7 @@ static BUFFER *data_end;
 /* buffer end point, pointer to the last octet + 1 of the data */
 static BUFFER *buffer_end;
 
-/* Peeked char from input preprosessor */
+/* Peeked char from input preprocessor */
 static int ungetchar = -1;
 
 /* state variable */
@@ -156,7 +156,7 @@ open_next_input_file()
 }
 
 /* read from input stream. 
-   Check if ungetchar contains a valid char and write it to buffer then read nmenb - 1 chars
+   Check if ungetchar contains a valid char and write it to buffer then read nmemb - 1 chars
    NOTE! it is assumed that size == 1...
 */
 
@@ -220,7 +220,7 @@ buffer_data()
 /* commands are:
    B_INIT - initialize buffer after opening a file, return 0 if nothing could be read
    B_DESIRED - try to get size data on buffer, return 1 in every case
-   B_NEEDED -  try to get size data on buffer, return 1 if success, 0 id not
+   B_NEEDED -  try to get size data on buffer, return 1 if success, 0 if not
    B_FLUSH - data in buffer has been used, read more if low_water has been reached
    B_PRINTED - data in buffer (below new_data) has been printed, so state can be changed to OK
 
@@ -275,8 +275,8 @@ get_buffer_state()
     return buffer_state;
 }
 
-/* search buffer for a octet */
-/* return the number of bytes from new_data + offset pointer where octet has found */
+/* search buffer for an octet */
+/* return the number of bytes from new_data + offset pointer where octet was found */
 /* skips first offset bytes */
 /* return -1 if not found */
 static int
@@ -290,8 +290,8 @@ do_search_buffer_c(BUFFER c,size_t offset)
     return (int) (p - new_data);
 }
 
-/* search buffer for a octet */
-/* return the number of bytes from new_data + offset pointer where octet has found */
+/* search buffer for an octet */
+/* return the number of bytes from new_data + offset pointer where octet was found */
 /* return -1 if not found */
 int
 search_buffer_c(BUFFER c,size_t offset)
@@ -308,7 +308,7 @@ search_buffer_c(BUFFER c,size_t offset)
 }
 
 /* search buffer for a string (not null terminated) */
-/* return the number of bytes from new_data + offset pointer where octet has found */
+/* return the number of bytes from new_data + offset pointer where string was found */
 /* return -1 if not found */
 static int
 do_search_buffer_s(BUFFER *s,size_t len,size_t offset)
@@ -323,7 +323,7 @@ do_search_buffer_s(BUFFER *s,size_t len,size_t offset)
 }
 
 /* search buffer for a string (not null terminated) */
-/* return the number of bytes from new_data + offset pointer where octet has found */
+/* return the number of bytes from new_data + offset pointer where string was found */
 /* return -1 if not found */
 int
 search_buffer_s(BUFFER *s,size_t len,size_t offset)

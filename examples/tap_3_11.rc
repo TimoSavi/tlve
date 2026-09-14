@@ -1,25 +1,25 @@
 # Example file for reading GSM Association's TAP 3 files
-# Names of the elements are according TD.57 version 3.11.05
+# Names of the elements follow TD.57 version 3.11.05
 #
 # Try this:
 # Just print the file contents:
 # $tlve -c tap_3_11.rc -s tap311 <input files>
  
-# search for calls with a particular imsi:
+# Search for calls with a particular IMSI:
 # $tlve -c tap_3_11.rc -s tap311 -l 3 -e imsi=123456789012345 <input files>
-# use -l 3 to print whole calls, without -l 3 tlve prints only imsis. Call information starts from level 3.
+# Use -l 3 to print entire calls; without -l 3, tlve prints only IMSIs. Call information starts at level 3.
 
 # Print the file contents with tag and value dumps:
 # $tlve -c tap_3_11.rc -s tap311 -p dump <input files>
 
-# Print imsi and msisdn for imsis which start with 12345 in csv format, use -l3 to make a block for every
-# call and use printing keyword block-end to print a newline after every call
-# Note that the Sender is also printed, because it is put in "hold" and printed using
-# the sender print definition
+# Print IMSI and MSISDN for IMSIs that start with 12345 in CSV format. Use -l3 to create a block for each
+# call and use printing keyword block-end to print a newline after each call.
+# Note that Sender is also printed, because it is put on "hold" and printed using
+# the sender print definition:
 # $tlve -c tap_3_11.rc -s tap311 -l3 -e imsi=^12345 -n imsi,msisdn -p sender <input files>
 
-# Print imsi and msisdn for all calls and also print the sender and the call type. 
-# Sender and call type are printed using hold variables
+# Print IMSI and MSISDN for all calls, along with the sender and call type.
+# Sender and call type are printed using hold variables:
 # $tlve -c tap_3_11.rc -s tap311 -l3 -n imsi,msisdn -p call <input files>
 
 tl name=ber tag=ber length=ber

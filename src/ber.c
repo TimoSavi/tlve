@@ -42,8 +42,8 @@
 #define B_LENGTH_MASK 0x7f
 #define B_LENGTH_INDEFINITE 0x80
 
-/* read a BER tag, format tag as X-nnn, where X is the tag class (U,A,C or P) and nnn is the tag number
-   as decimal integer
+/* read a BER tag; format tag as X-nnn, where X is the tag class (U, A, C, or P) and nnn is the tag number
+   as a decimal integer
 
    returns the count of octets consumed, 0 in case of error
 
@@ -104,7 +104,7 @@ read_ber_tag(char *tag,TYPE *type,TYPE *constructor_type)
         *type = T_CONSTRUCTED;
     } else
     {
-        if(loctet == (BUFFER) 0)   // in BER enf of content is marked with tag value zero
+        if(loctet == (BUFFER) 0)   // in BER end of content is marked with tag value zero
         {
             if(*(buffer_data() + (size_t) 1) == (BUFFER) 0)
             {
@@ -176,7 +176,7 @@ read_ber_length(FILE_OFFSET *length,size_t tag_consumed)
     return p - buffer_data() + (size_t) 1;
 }
 
-/* format a ber bit string
+/* format a BER bit string
  */
 void
 format_ber_bit_string(char *target,BUFFER *source, size_t length)
@@ -220,7 +220,7 @@ format_ber_bit_string(char *target,BUFFER *source, size_t length)
 }
 
 
-/* format BER Oid value as a string
+/* format BER OID value as a string
  */
 void
 format_oid(char *target,BUFFER *source, size_t length)

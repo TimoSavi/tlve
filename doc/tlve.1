@@ -44,16 +44,16 @@ Read configuration from \fIname\fR instead of ~/.tlverc.
 Dump unprocessable data to tlve.debug.
 .TP 
 .B \-n, " \-\-name\-list \fIlist\fR"
-Print only elements having name or tag in comma separated list \fIlist\fR.
+Print only elements having name or tag in comma-separated list \fIlist\fR.
 .TP 
 .B \-s, " \-\-structure \fIname\fR"
 Use structure \fIname\fR to process the input data.
 .TP 
 .B \-e, " \-\-expression \fIname\fR=\fIvalue\fR"
-Print only elements for which the expression \fIname\fR=\fIvalue\fR evaluates true.
+Print only elements for which the expression \fIname\fR=\fIvalue\fR evaluates to true.
 .TP 
 .B \-a, \-\-and
-All expressions must evaluate true.
+All expressions must evaluate to true.
 .TP 
 .B \-p, " \-\-print \fIname\fR"
 Use printing definition \fIname\fR to print the data.
@@ -62,10 +62,10 @@ Use printing definition \fIname\fR to print the data.
 Write output to \fIname\fR instead of standard output.
 .TP 
 .B \-l, " \-\-start\-level \fIlevel\fR"
-Print only levels starting from \fIlevel\fR in element hierarchy, first level is 1.
+Print only levels starting from \fIlevel\fR in element hierarchy; first level is 1.
 .TP 
 .B \-L, " \-\-stop\-level \fIlevel\fR"
-Print only levels to \fIlevel\fR in element hierarchy, first level is 1.
+Print only levels up to \fIlevel\fR in element hierarchy; first level is 1.
 .TP 
 .B \-h, \-\-help
 Show summary of options.
@@ -75,7 +75,7 @@ Show version of program.
 .\"
 .SH "SEE ALSO"
 .LP 
-The full documentation for tlve is maintained as a Texinfo manual. If the \fBinfo\fR and \fBtlve\fR are properly installed, the command
+The full documentation for tlve is maintained as a Texinfo manual. If \fBinfo\fR and \fBtlve\fR are properly installed, the command
 .sp 3
        \fBinfo\fR \fBtlve\fR
 .sp 3

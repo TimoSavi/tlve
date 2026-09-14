@@ -1,11 +1,11 @@
 # tlve
-tlve is a command-line tool to parse different tlv (tag-length-value) structures and for printing them in different text-based formats. tlve is mentioned for processing tlv files in server environments.
+tlve is a command-line tool for parsing different TLV (tag-length-value) structures and printing them in various text-based formats. tlve is designed for processing TLV files in server environments.
 See [manual](http://htmlpreview.github.io/?https://github.com/TimoSavi/tlve/blob/main/doc/tlve.html) for more details.
 
 ## Build from source
-GNU autotools and gcc are required to build tlve.
+GNU Autotools and GCC are required to build tlve.
 
-Clone from github and then:
+Clone from GitHub and then:
 
     cd tlve
     autoreconf -is

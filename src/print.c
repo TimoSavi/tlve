@@ -163,8 +163,8 @@ print_list_writec(char c)
     if(fputc(c,ofp) == EOF) panic("Error writing to output",strerror(errno),NULL);
 }
 
-/* return the items name, if nameis not defined (in with keyword tlv) return
-   the tag value enclosed  in <>. 
+/* return the item's name; if name is not defined (with keyword tlv), return
+   the tag value enclosed in <>. 
 
    value is in static buffer so it must be copied before use
  */
@@ -189,7 +189,7 @@ print_list_get_item_name(struct tlvitem *i)
     return name;
 }
 
-/* Add names to name list, names are comma separated 
+/* Add names to name list; names are comma-separated 
  */
 void
 print_list_add_names(char *names)
@@ -233,7 +233,7 @@ expression_list_all_true()
     return 1;
 }
 
-/* return true if atleast one expression contains true result */
+/* return true if at least one expression contains true result */
 static int
 expression_list_any_true()
 {
@@ -243,8 +243,8 @@ expression_list_any_true()
     return 0;
 }
 
-/* Add expression to list, expressions are in form NAME=VALUE, where name is the name
-   of a item and value regular expression to be validated with name's converted_value
+/* Add expression to list; expressions are in the form NAME=VALUE, where name is the name
+   of an item and value is a regular expression to be validated with name's converted_value
  */
 void
 print_list_add_expression(char *exp)
@@ -315,7 +315,7 @@ print_list_is_printed(struct print_list *p)
 }
 
 /* copy a new item to print list */
-/* as the tlvitem->converted_value is static it must be copied to new new place */
+/* as the tlvitem->converted_value is static it must be copied to a new place */
 static void
 print_list_copy(struct tlvitem *i, struct print_list *p)
 {
@@ -783,7 +783,7 @@ format_common(char c,struct tlvitem *i,char *fencoding, char *toencoding)
     return "";
 }
 
-/* trim value, remove whitespace from start end end
+/* trim value; remove whitespace from start and end
  */
 static char *
 trim(char *value)
@@ -852,7 +852,7 @@ format_level_head(char c,struct tlvitem *i,char *fencoding, char *toencoding)
 }
 
 /* format level trailer data */
-/* remove d and D, because raw data is not necessary available in buffer any more */
+/* remove d and D, because raw data is not necessarily available in buffer anymore */
 static char *
 format_level_trailer(char c,struct tlvitem *i,char *fencoding, char *toencoding)
 {
@@ -869,8 +869,8 @@ format_file(char c,struct tlvitem *i,char *fencoding, char *toencoding)
     return format_common(c,i,fencoding,toencoding);
 }
 
-/* search the hold list for element name, select the longest match */
-/* returns the elements name length when found, else 0 */
+/* search the hold list for element name; select the longest match */
+/* returns the element's name length when found, else 0 */
 static int
 find_hold_data(char *name,char **data)
 {
@@ -910,7 +910,7 @@ find_hold_data(char *name,char **data)
 
 
 
-/* print a item, use formatting function format %-directives */
+/* print an item; use formatting function to format %-directives */
 static void
 print_item(struct tlvitem *i,char *data,char *indent,char *fencoding, char *toencoding,pt_to_print pf)
 {
@@ -1053,15 +1053,15 @@ search_prev_constructor_tr_not_printed(struct tlvitem *item)
     return NULL;
 }
 
-/* print seprator char */
+/* print separator char */
 static void
 print_list_separator(char separator)
 {
     if(separator) print_list_writec(separator);
 }
 
-/* get printlist items printing definitions 
-   use one from tlv definition if given, other cases use on from tl
+/* get printlist item's printing definitions; 
+   use one from tlv definition if given; in other cases use one from tl
  */
 static struct print *
 print_list_print_data(struct print_list *pitem)

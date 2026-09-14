@@ -78,7 +78,7 @@ struct tldef *tl = NULL;
 struct print *print = NULL;
 struct hold *hold = NULL;
 struct type_mappings *type_maps = NULL;
-char *codeset = "";           // current code set
+char *codeset = "";           // current codeset
 int debug = 0;                // write debug data in case of processing error
 char *tlve_open = NULL;
 
@@ -311,14 +311,14 @@ A program to parse tag-length-value structures and print them in different forma
 Options:\n\
   -c, --configuration NAME    read configuration from NAME instead of ~/.tlverc\n\
   -d, --debug                 dump unprocessable data to tlve.debug\n\
-  -n, --name-list LIST        print only elements having name or tag in comma separated list LIST\n\
+  -n, --name-list LIST        print only elements having name or tag in comma-separated list LIST\n\
   -s, --structure NAME        use structure NAME to process the input data\n\
-  -e, --expression NAME=VALUE print only elements for which the expression NAME=VALUE evaluates true\n\
-  -a, --and                   all expressions must evaluate true\n\
+  -e, --expression NAME=VALUE print only elements for which the expression NAME=VALUE evaluates to true\n\
+  -a, --and                   all expressions must evaluate to true\n\
   -p, --print NAME            use printing definition NAME to print the data\n\
   -o, --output NAME           send output to NAME instead of standard output\n\
   -l, --start-level LEVEL     first level in element hierarchy to be printed\n\
-  -L, --stopt-level LEVEL     last level in element hierarchy to be printed\n\
+  -L, --stop-level LEVEL      last level in element hierarchy to be printed\n\
   -h, --help                  display this help and exit\n\
   -V, --version               output version information and exit\n\
 \nAll remaining arguments are names of input files;\n\

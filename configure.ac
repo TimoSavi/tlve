@@ -18,7 +18,7 @@ AC_SUBST([SHELL_CMD])
 AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED([HOST],["$host"],[Host type.])
 AC_DEFINE_UNQUOTED([BUILD_DATE],["$ISODATE"],[Build date.])
-AC_DEFINE_UNQUOTED([SHELL_CMD],["$SHELL_CMD"],[Define to the shell for input preprosessing.])
+AC_DEFINE_UNQUOTED([SHELL_CMD],["$SHELL_CMD"],[Define to the shell for input preprocessing.])
 
 # Checks for programs.
 AC_PROG_CC

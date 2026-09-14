@@ -1,10 +1,10 @@
-# Example of binary coded tlv file where tag and length are both
-# unsigned integers with length of two octets.
+# Example of a binary-encoded TLV file where tag and length are both
+# unsigned integers with a length of two octets.
 #
-# tags from 1000 to 1999 are constructed elements and tag 4079 is constructed element with ASN.1 ber encoded contents
-# all other tags are printed as hex values
+# Tags from 1000 to 1999 are constructed elements and tag 4079 is a constructed element with ASN.1 BER encoded contents
+# All other tags are printed as hex values.
 #
-# test this with command:
+# Test this with command:
 # tlve -c binary.rc -s bin <input file>
 
 tl name=ber tag=ber length=ber

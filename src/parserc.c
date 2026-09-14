@@ -88,7 +88,7 @@ static char *parameters[P_MAX + 1];
 /* Types */
 static char *types[T_MAX + 1];
 
-/* One paramter/value pair found in config line */
+/* One parameter/value pair found in config line */
 struct rcconfig
 {
     TYPE parameter;
@@ -96,7 +96,7 @@ struct rcconfig
     char value[1024];
 };
 
-/* Paramter/value pairs for current line */
+/* Parameter/value pairs for current line */
 static struct rcconfig pvpairs[MAX_PARAMETER];
 static int parameter_count;
 
@@ -203,7 +203,7 @@ config_panic(char *e1,char *e2,char *e3)
 }
 
 /* search keyword table for a keyword, search is not case-sensitive */
-/* in not found return E_UNKNOWN */
+/* if not found return E_UNKNOWN */
 static int
 search_config_item(char **table,int count,char *keyword)
 {
@@ -464,7 +464,7 @@ parse_line()
     return 1;
 }
 
-/* parse one tag or length defintion, these are in form:
+/* parse one tag or length definition; these are in the form:
    type,length,mask,shift,offset
 
    type is "int", "intbe", "intle", "string" or "ber"
@@ -473,7 +473,7 @@ parse_line()
    shift is signed integer
    offset is unsigned integer
 
-   minimun required is type and length (ber does not need the length)
+   minimum required is type and length (ber does not need the length)
 */
 
 #define BO_LS ','
@@ -590,7 +590,7 @@ end:
 }
 
 
-/* check if paramters contain the name of the sructure */
+/* check if parameters contain the name of the structure */
 static int
 check_structure_name(char *name)
 {
@@ -628,7 +628,7 @@ add_hold_list(void)
     return new;
 }
 
-/* Add or find a item to hold list, item is searched according the name */
+/* Add or find an item in the hold list; item is searched according to the name */
 static struct hold *
 add_or_find_hold_list(char *name)
 {
@@ -660,7 +660,7 @@ add_or_find_hold_list(char *name)
 
 
 /* parse rc-file, read all definitions and
-   recuired structure definitions
+   required structure definitions
 
    put tl's to global list and structure to global variable
 */
@@ -1228,7 +1228,7 @@ search_mapping(char *name)
 }
 
 
-/* verify data after read the whole rc-file */
+/* verify data after reading the whole rc-file */
 static void
 verify_rc_data()
 {
