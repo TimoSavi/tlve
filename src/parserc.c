@@ -290,6 +290,7 @@ read_logical_line()
                 if(prev != '\\') quoted = !quoted;
                 break;
             case '\n':
+                if(i && line[i-1] == '\r') i--;
                 if(i && line[i-1] == '\\') // does line continue on next physical line
                 {
                     line[i-1] = ' ';       // replace with space
@@ -301,6 +302,7 @@ read_logical_line()
                 }
                 break;
             case EOF:
+                if(i && line[i-1] == '\r') i--;
                 line[i] = 0;
                 return i;
                 break;
@@ -1132,7 +1134,7 @@ parse_rc(char *rcfile, char *required_structure,char *printing)
                     cprint->block_end = NULL;
                     cprint->level_head = NULL;
                     cprint->level_trailer = NULL;
-                    cprint->content = "%v";
+                    cprint->content = xstrdup("%v");
                     cprint->ucontent = NULL;
                     cprint->indent = NULL;
                     cprint->encoding = NULL;
@@ -1160,9 +1162,11 @@ parse_rc(char *rcfile, char *required_structure,char *printing)
                                 cprint->level_trailer = xstrdup(pvpairs[i].value);
                                 break;
                             case P_CONTENT:
+                                if(cprint->content != NULL) free(cprint->content);
                                 cprint->content = xstrdup(pvpairs[i].value);
                                 break;
                             case P_UCONTENT:
+                                if(cprint->ucontent != NULL) free(cprint->ucontent);
                                 cprint->ucontent = xstrdup(pvpairs[i].value);
                                 break;
                             case P_INDENT:
@@ -1187,7 +1191,7 @@ parse_rc(char *rcfile, char *required_structure,char *printing)
                         i++;
                     }
                     if(cprint->name == NULL) config_panic("print: Printing definition must have a name",NULL,NULL);
-                    if(cprint->ucontent == NULL) cprint->ucontent = cprint->content;
+                    if(cprint->ucontent == NULL) cprint->ucontent = xstrdup(cprint->content);
                 } else
                 {
                     config_panic("Printing definition found",NULL,NULL);
@@ -1396,7 +1400,7 @@ free_parserc(void)
         if(cp->level_trailer != NULL) free(cp->level_trailer);
         if(cp->block_start != NULL) free(cp->block_start);
         if(cp->block_end != NULL) free(cp->block_end);
-        if(cp->ucontent != NULL && cp->ucontent != cp->content) free(cp->ucontent);
+        if(cp->ucontent != NULL) free(cp->ucontent);
         if(cp->content != NULL) free(cp->content);
         if(cp->indent != NULL) free(cp->indent);
         if(cp->encoding != NULL) free(cp->encoding);

@@ -32,4 +32,18 @@ if "$TLVE" -c /nonexistent/path/to/rcfile -o /dev/null /dev/null > /dev/null 2>&
     exit 1
 fi
 
+# Test config with CRLF line endings and print definition without value=
+TMP_CRLF=$(mktemp)
+cat << 'EOF' | sed -e 's/$/\r/' > "$TMP_CRLF"
+tl name=ber tag=ber length=ber
+print name=call constructor="%n {\n" constructor-end="}\n"
+structure name=test content-tl=ber
+tlv name=item tag=1
+structure-end
+EOF
+TMP_DAT=$(mktemp)
+printf '\x01\x01\x42' > "$TMP_DAT"
+"$TLVE" -c "$TMP_CRLF" -s test -p call "$TMP_DAT" > /dev/null
+rm -f "$TMP_CRLF" "$TMP_DAT"
+
 exit 0
