@@ -31,7 +31,6 @@ AC_SEARCH_LIBS(libiconv_open, iconv)
 
 
 # Checks for header files.
-jm_CHECK_TYPE_STRUCT_UTIMBUF
 AC_HEADER_STDC
 AC_CHECK_HEADERS([ctype.h fcntl.h features.h error.h errno.h getopt.h regex.h langinfo.h time.h libintl.h locale.h sys/time.h iconv.h signal.h])
 
