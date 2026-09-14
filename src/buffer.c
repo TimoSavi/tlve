@@ -461,14 +461,14 @@ buffer_read(size_t size)
 VOID
 buffer_ahead()
 {
-    if(buffer_address_safe(buffer_data() + 1)) new_data++;
+    if(new_data < data_end) new_data++;
 }
 
 /* move pointer back after peeking the next value */
 VOID
 buffer_back()
 {
-    if(buffer_address_safe(buffer_data() - 1)) new_data--;
+    if(new_data > buffer_start) new_data--;
 }
 
 
