@@ -157,7 +157,7 @@ get_default_rc_name()
         strcat(result,file);
     } else
     {
-        result = file;
+        result = xstrdup(file);
     }
     return result;
 }
@@ -265,6 +265,13 @@ main (int argc, char **argv)
                 break;
             case 'V':
                 print_version();
+#ifdef HAVE_NL_LANGINFO
+                if(codeset != NULL && codeset[0] != '\0')
+                {
+                    free(codeset);
+                    codeset = "";
+                }
+#endif
                 exit(EXIT_SUCCESS);
                 break;
             case '?':
@@ -282,17 +289,21 @@ main (int argc, char **argv)
         set_input_file("-");
     }
      
+    char *default_rc = NULL;
+
     tlve_open = getenv("TLVEOPEN");
 
-    if(config_to_use == NULL) config_to_use = get_default_rc_name();
-    if(structure_to_use == NULL) structure_to_use = "default";
+    if(config_to_use == NULL)
+    {
+        default_rc = get_default_rc_name();
+        config_to_use = default_rc;
+    }
 
-    parse_rc(config_to_use,structure_to_use,print_to_use);
+    parse_rc(config_to_use, structure_to_use != NULL ? structure_to_use : "default", print_to_use);
 
     print_list_check_names();
 
-    if(output_to_use == NULL) output_to_use = "-";
-    print_list_open_output(output_to_use);
+    print_list_open_output(output_to_use != NULL ? output_to_use : "-");
 
     execute();
 
@@ -300,6 +311,26 @@ main (int argc, char **argv)
     free_input_files();
     free_buffer();
     free_print_list();
+    free_parserc();
+    free_iconv();
+
+    if(default_rc != NULL)
+    {
+        free(default_rc);
+    } else if(config_to_use != NULL)
+    {
+        free(config_to_use);
+    }
+    if(structure_to_use != NULL) free(structure_to_use);
+    if(print_to_use != NULL) free(print_to_use);
+    if(output_to_use != NULL) free(output_to_use);
+#ifdef HAVE_NL_LANGINFO
+    if(codeset != NULL && codeset[0] != '\0')
+    {
+        free(codeset);
+        codeset = "";
+    }
+#endif
 
     exit (EXIT_SUCCESS);
 }
@@ -308,6 +339,13 @@ main (int argc, char **argv)
 static void
 usage (int status)
 {
+#ifdef HAVE_NL_LANGINFO
+  if(codeset != NULL && codeset[0] != '\0')
+  {
+      free(codeset);
+      codeset = "";
+  }
+#endif
   printf ("%s - \
 A program to parse tag-length-value structures and print them in different formats\n", program_name);
   printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);

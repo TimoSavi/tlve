@@ -693,7 +693,7 @@ parse_rc(char *rcfile, char *required_structure,char *printing)
                 if(state != READING) config_panic("Structure keyword found",NULL,NULL);
                 if(check_structure_name(required_structure) && structure.name == NULL)
                 {
-                    structure.print_name = printing != NULL ? printing : "default";
+                    structure.print_name = xstrdup(printing != NULL ? printing : "default");
                     structure.content_tl = NULL;
                     structure.tlv = NULL;
                     structure.filler_string = NULL;
@@ -708,17 +708,21 @@ parse_rc(char *rcfile, char *required_structure,char *printing)
                         switch(pvpairs[i].parameter)
                         {
                             case P_PRINT:
+                                if(structure.print_name != NULL) free(structure.print_name);
                                 structure.print_name = xstrdup(pvpairs[i].value);
                                 break;
                             case P_CONTENT_TL: 
+                                if(structure.tl_name != NULL) free(structure.tl_name);
                                 structure.tl_name = xstrdup(pvpairs[i].value);
                                 break;
                             case P_FILLER:
+                                if(structure.filler_string != NULL) free(structure.filler_string);
                                 structure.filler_length = pvpairs[i].value_len;
                                 structure.filler_string = xmalloc(structure.filler_length);
                                 memcpy(structure.filler_string,pvpairs[i].value,pvpairs[i].value_len);
                                 break;
                             case P_NAME: 
+                                if(structure.name != NULL) free(structure.name);
                                 structure.name =  xstrdup(pvpairs[i].value);
                                 break;
                             case P_HEX_CAPS:
@@ -920,7 +924,7 @@ parse_rc(char *rcfile, char *required_structure,char *printing)
                     if(ctl->tag == NULL) config_panic("tl: A definition must have tag definition",NULL,NULL);
                     if(ctl->len == NULL && !ctl->value_terminator_len) config_panic("tl: length or value-terminator must be defined",NULL,NULL);
                     if(ctl->value_terminator_len && ctl->len != NULL) config_panic("tl: length and value-terminator are mutually exclusive",NULL,NULL);
-                    if(printing != NULL) ctl->print_name = printing;
+                    if(printing != NULL) ctl->print_name = xstrdup(printing);
 
                     if(ctl->value_terminator_len)
                     {
@@ -1085,12 +1089,12 @@ parse_rc(char *rcfile, char *required_structure,char *printing)
                     }
                     if(ctlv->hold_buffer != NULL && ctlv->name != NULL && ctlv->hold_buffer->name == NULL) 
                     {
-                        ctlv->hold_buffer->name = ctlv->name;
+                        ctlv->hold_buffer->name = xstrdup(ctlv->name);
                         ctlv->hold_buffer->name_len = strlen(ctlv->name);
                     }
                     if(ctlv->stag == NULL) config_panic("tlv: tag missing",NULL,NULL);
                     if(ctlv->etag == NULL) ctlv->etag = ctlv->stag;
-                    if(printing != NULL) ctlv->print_name = printing;
+                    if(printing != NULL) ctlv->print_name = xstrdup(printing);
                 }
                 break;
             case K_PRINT:
@@ -1156,10 +1160,10 @@ parse_rc(char *rcfile, char *required_structure,char *printing)
                                 cprint->separator = pvpairs[i].value[0];
                                 break;
                             case P_BLOCK_START:
-                                cprint->block_start = xstrdup(pvpairs[i].value);;
+                                cprint->block_start = xstrdup(pvpairs[i].value);
                                 break;
                             case P_BLOCK_END:
-                                cprint->block_end = xstrdup(pvpairs[i].value);;
+                                cprint->block_end = xstrdup(pvpairs[i].value);
                                 break;
                             default:
                                 config_panic("print: Unknown parameter",parameters[pvpairs[i].parameter],NULL);
@@ -1179,6 +1183,8 @@ parse_rc(char *rcfile, char *required_structure,char *printing)
     }
     fclose(rcfp);
     free(line);
+    line = NULL;
+    line_length = 0;
     if(state == STRUCTURE_READING) config_panic("Structure definition has no end keyword",NULL,NULL);
     if(state == TYPEMAP_READING) config_panic("Typemap definition has no end keyword",NULL,NULL);
     if(structure.name == NULL) panic("No structure named as",required_structure,NULL);
@@ -1265,7 +1271,7 @@ verify_rc_data()
 
     while(t != NULL)
     {
-        if(t->print_name == NULL) t->print_name = structure.print_name;  // use one from structure if not defined
+        if(t->print_name == NULL) t->print_name = xstrdup(structure.print_name);  // use one from structure if not defined
 
         t->p = search_print(t->print_name);
         if(t->p == NULL) panic("No printing definition named as",t->print_name,NULL);
@@ -1275,4 +1281,141 @@ verify_rc_data()
 
         t = t->next;
     }
+}
+
+/* Free all configuration memory allocated by parse_rc */
+void
+free_parserc(void)
+{
+    struct tldef *ctl, *next_tl;
+    struct print *cp, *next_p;
+    struct type_mappings *ctms, *next_tms;
+    struct type_map *ctm, *next_tm;
+    struct hold *ch, *next_h;
+    struct tlvlist *tlvl, *next_tlvl;
+    struct tlvdef *def;
+
+    if(line != NULL)
+    {
+        free(line);
+        line = NULL;
+        line_length = 0;
+    }
+
+    if(structure.name != NULL)
+    {
+        free(structure.name);
+        structure.name = NULL;
+    }
+    if(structure.print_name != NULL)
+    {
+        free(structure.print_name);
+        structure.print_name = NULL;
+    }
+    if(structure.tl_name != NULL)
+    {
+        free(structure.tl_name);
+        structure.tl_name = NULL;
+    }
+    if(structure.filler_string != NULL)
+    {
+        free(structure.filler_string);
+        structure.filler_string = NULL;
+    }
+
+    tlvl = structure.tlv;
+    while(tlvl != NULL)
+    {
+        next_tlvl = tlvl->next;
+        def = tlvl->tlv;
+        if(def != NULL)
+        {
+            if(def->path != NULL) free(def->path);
+            if(def->name != NULL) free(def->name);
+            if(def->stag != NULL)
+            {
+                if(def->etag != NULL && def->etag != def->stag) free(def->etag);
+                free(def->stag);
+            } else if(def->etag != NULL)
+            {
+                free(def->etag);
+            }
+            if(def->content_tl_name != NULL) free(def->content_tl_name);
+            if(def->print_name != NULL) free(def->print_name);
+            if(def->encoding != NULL) free(def->encoding);
+            if(def->format != NULL) free(def->format);
+            free(def);
+        }
+        free(tlvl);
+        tlvl = next_tlvl;
+    }
+    structure.tlv = NULL;
+
+    ctl = tl;
+    while(ctl != NULL)
+    {
+        next_tl = ctl->next;
+        if(ctl->name != NULL) free(ctl->name);
+        if(ctl->tag != NULL) free(ctl->tag);
+        if(ctl->type != NULL) free(ctl->type);
+        if(ctl->len != NULL) free(ctl->len);
+        if(ctl->value_terminator != NULL && ctl->value_terminator != ber_content_terminator)
+        {
+            free(ctl->value_terminator);
+        }
+        if(ctl->print_name != NULL) free(ctl->print_name);
+        if(ctl->type_mapping != NULL) free(ctl->type_mapping);
+        free(ctl);
+        ctl = next_tl;
+    }
+    tl = NULL;
+
+    cp = print;
+    while(cp != NULL)
+    {
+        next_p = cp->next;
+        if(cp->name != NULL) free(cp->name);
+        if(cp->file_head != NULL) free(cp->file_head);
+        if(cp->file_trailer != NULL) free(cp->file_trailer);
+        if(cp->level_head != NULL) free(cp->level_head);
+        if(cp->level_trailer != NULL) free(cp->level_trailer);
+        if(cp->block_start != NULL) free(cp->block_start);
+        if(cp->block_end != NULL) free(cp->block_end);
+        if(cp->ucontent != NULL && cp->ucontent != cp->content) free(cp->ucontent);
+        if(cp->content != NULL) free(cp->content);
+        if(cp->indent != NULL) free(cp->indent);
+        if(cp->encoding != NULL) free(cp->encoding);
+        free(cp);
+        cp = next_p;
+    }
+    print = NULL;
+
+    ctms = type_maps;
+    while(ctms != NULL)
+    {
+        next_tms = ctms->next;
+        if(ctms->name != NULL) free(ctms->name);
+        ctm = ctms->mappings;
+        while(ctm != NULL)
+        {
+            next_tm = ctm->next;
+            if(ctm->source_type != NULL) free(ctm->source_type);
+            free(ctm);
+            ctm = next_tm;
+        }
+        free(ctms);
+        ctms = next_tms;
+    }
+    type_maps = NULL;
+
+    ch = hold;
+    while(ch != NULL)
+    {
+        next_h = ch->next;
+        if(ch->name != NULL) free(ch->name);
+        if(ch->buffer != NULL) free(ch->buffer);
+        free(ch);
+        ch = next_h;
+    }
+    hold = NULL;
 }

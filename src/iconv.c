@@ -94,3 +94,21 @@ make_iconv(char *data,char *from,char *to)
     return data;
 #endif
 }
+
+void
+free_iconv(void)
+{
+#if defined(HAVE_ICONV_OPEN) && defined(HAVE_ICONV_T)
+    if(cd != (iconv_t) -1)
+    {
+        iconv_close(cd);
+        cd = (iconv_t) -1;
+    }
+#endif
+    if(outb != NULL)
+    {
+        free(outb);
+        outb = NULL;
+        outb_size = 0;
+    }
+}

@@ -307,6 +307,7 @@ FILE * xfopen(const char *, const char *, char);
 
 /* parserc.c prototypes */
 void parse_rc(char *, char *,char *);
+void free_parserc(void);
 
 /* buffer.c prototypes */
 void set_input_file(char *);
@@ -364,6 +365,7 @@ void format_oid(char *,BUFFER *, size_t);
 
 /* iconv.c prototypes */
 char *make_iconv(char *,char *,char *);
+void free_iconv(void);
 
 
 
