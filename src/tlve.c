@@ -260,13 +260,14 @@ main (int argc, char **argv)
             case 'L':
                 print_set_print_stop_level(atoi(optarg));
                 break;
-            case '?':
+            case 'h':
                 usage(EXIT_SUCCESS);
                 break;
             case 'V':
                 print_version();
                 exit(EXIT_SUCCESS);
                 break;
+            case '?':
             default:
                 usage(EXIT_FAILURE);
                 break;
