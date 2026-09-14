@@ -1404,4 +1404,5 @@ execute()
         new.converted_value = NULL;
         new.converted_value_len = 0;
     }
+    print_init_path();
 }

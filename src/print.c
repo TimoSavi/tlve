@@ -83,10 +83,8 @@ struct path_name
 };
 
 
-#define MAX_PATH_LEN (8 * 1024)
-static char path[MAX_PATH_LEN] = {0};       // name of the current path
-                                  // structure.level1_name.level2_name.<level3_tag>.....
-                                  // ends allways with dot
+static char *path = NULL;
+static size_t path_size = 0;
 static struct path_name path_names[MAX_LEVEL]; // Individual path names
 static int path_level = 0;
 static int start_print_level = 0;  // which is the first level to be printed, default is the first level
@@ -113,10 +111,21 @@ print_init_path()
 
     while(i < MAX_LEVEL)
     {
-        path_names[i].name = NULL;
+        if(path_names[i].name != NULL)
+        {
+            free(path_names[i].name);
+            path_names[i].name = NULL;
+        }
         path_names[i].length = 0;
         i++;
     }
+    if(path != NULL)
+    {
+        free(path);
+        path = NULL;
+        path_size = 0;
+    }
+    path_level = 0;
 }
 
 
@@ -124,19 +133,35 @@ print_init_path()
 static void
 make_printable_path()
 {
-    int i = 0;
-    char sep[2];
+    int i;
+    size_t needed = 1;
+    char *p;
 
-    path[0] = 0;
-    sep[0] = PATH_SEPARATOR;
-    sep[1] = 0;
-
-    while(i < path_level)
+    for(i = 0; i < path_level; i++)
     {
-        strcat(path,path_names[i].name);
-        if(i < path_level - 1) strcat(path,sep);
-        i++;
+        needed += strlen(path_names[i].name) + 1;
     }
+
+    if(needed > path_size)
+    {
+        path = xrealloc(path, needed);
+        path_size = needed;
+    }
+
+    p = path;
+    *p = '\0';
+
+    for(i = 0; i < path_level; i++)
+    {
+        size_t nlen = strlen(path_names[i].name);
+        memcpy(p, path_names[i].name, nlen);
+        p += nlen;
+        if(i < path_level - 1)
+        {
+            *p++ = PATH_SEPARATOR;
+        }
+    }
+    *p = '\0';
 }
 
 
@@ -145,7 +170,7 @@ make_printable_path()
 char *
 print_list_path()
 {
-    if(path[0] == 0) make_printable_path();
+    if(path == NULL || path[0] == 0) make_printable_path();
     return path;
 }
 
@@ -376,7 +401,7 @@ print_list_down(struct tlvitem *item)
         path_names[path_level].length = ilen+1;
     }
 
-    path[0] = 0;              // mark path change
+    if(path != NULL) path[0] = 0;              // mark path change
 
     strcpy(path_names[path_level].name,name);
     path_level++;
@@ -387,7 +412,7 @@ print_list_down(struct tlvitem *item)
 void
 print_list_up()
 {
-    path[0] = 0;              // mark path change
+    if(path != NULL) path[0] = 0;              // mark path change
     if(path_level) path_level--;
 }
 
