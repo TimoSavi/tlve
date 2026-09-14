@@ -373,12 +373,17 @@ get_buffer_state()
 static int
 do_search_buffer_c(BUFFER c,size_t offset)
 {
-    register BUFFER *p;
+    BUFFER *p;
+    BUFFER *found;
+    size_t unread;
 
-    p = buffer_data() + offset;
-    while(buffer_address_safe(p) && *p != c) p++;
-    if(!buffer_address_safe(p)) return -1;
-    return (int) (p - new_data);
+    unread = buffer_unread();
+    if(offset >= unread) return -1;
+
+    p = new_data + offset;
+    found = memchr(p, c, unread - offset);
+    if(found == NULL) return -1;
+    return (int) (found - new_data);
 }
 
 /* search buffer for an octet */
@@ -404,13 +409,28 @@ search_buffer_c(BUFFER c,size_t offset)
 static int
 do_search_buffer_s(BUFFER *s,size_t len,size_t offset)
 {
-    register BUFFER *p;
+    BUFFER *p;
+    BUFFER *limit;
+    size_t unread;
 
-    p = buffer_data() + offset;
+    if(len == 0) return -1;
+    unread = buffer_unread();
+    if(offset >= unread || len > unread - offset) return -1;
 
-    while(buffer_address_safe(p + len - (size_t) 1) && memcmp(p,s,len) != 0) p++;
-    if(!buffer_address_safe(p + len - (size_t) 1)) return -1;
-    return (int) (p - new_data);
+    p = new_data + offset;
+    limit = new_data + unread - len;
+
+    while(p <= limit)
+    {
+        p = memchr(p, s[0], (size_t) (limit - p + 1));
+        if(p == NULL) return -1;
+        if(memcmp(p, s, len) == 0)
+        {
+            return (int) (p - new_data);
+        }
+        p++;
+    }
+    return -1;
 }
 
 /* search buffer for a string (not null terminated) */
