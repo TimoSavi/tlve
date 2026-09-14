@@ -59,7 +59,7 @@ static char *hex_to_ascii;
 static size_t
 hash(char *str)
 {
-    register unsigned long h = 5381;
+    unsigned long h = 5381;
     int c;
 
     while ((c = *str++) != 0)
@@ -98,7 +98,7 @@ init_level()
 static void
 update_levels(size_t size)
 {
-    register int i = FIRST_LEVEL;
+    int i = FIRST_LEVEL;
 
     while(i <= current_level)
     {
@@ -229,7 +229,7 @@ read_int_be(size_t offset,size_t length,unsigned long int mask,int shift)
 {
     long long int result = 0;
     int is_negative;
-    register BUFFER c,*p;
+    BUFFER c,*p;
     size_t i = 0;
 
     if(!length) return 0;
@@ -280,7 +280,7 @@ static unsigned long long int
 read_uint_be(size_t offset,size_t length,unsigned long int mask,int shift)
 {
     unsigned long long int result = 0;
-    register BUFFER c,*p;
+    BUFFER c,*p;
     size_t i = 0;
 
     if(!length) return 0;
@@ -316,7 +316,7 @@ read_int_le(size_t offset,size_t length,unsigned long int mask,int shift)
 {
     long long int result = 0;
     int is_negative;
-    register BUFFER c,*p;
+    BUFFER c,*p;
     size_t i;
 
     if(!length) return 0;
@@ -367,7 +367,7 @@ static unsigned long long int
 read_uint_le(size_t offset,size_t length,unsigned long int mask,int shift)
 {
     unsigned long long int result = 0;
-    register BUFFER c,*p;
+    BUFFER c,*p;
     size_t i;
 
     if(!length) return 0;
@@ -403,7 +403,7 @@ static void
 format_hex_string(char *target,BUFFER *source, size_t length)
 {
     size_t i = 0;
-    register char *p = target;
+    char *p = target;
 
     while(i < length)
     {
@@ -421,7 +421,7 @@ static void
 format_hexs_string(char *target,BUFFER *source, size_t length)
 {
     size_t i = 0;
-    register char *p = target;
+    char *p = target;
 
     while(i < length)
     {
@@ -439,7 +439,7 @@ static void
 format_dec_string(char *target,BUFFER *source, size_t length)
 {
     size_t i = 0;
-    register char *p = target;
+    char *p = target;
 
     while(i < length)
     {
@@ -456,7 +456,7 @@ static void
 format_escaped(char *target,BUFFER *source, size_t length)
 {
     size_t i = 0;
-    register char *p = target;
+    char *p = target;
 
     while(i < length)
     {
@@ -484,7 +484,7 @@ static void
 format_bcd_string(char *target,BUFFER *source, size_t length)
 {
     size_t i = 0;
-    register char *p = target;
+    char *p = target;
 
     while(i < length)
     {
@@ -516,7 +516,7 @@ static void
 format_bcds_string(char *target,BUFFER *source, size_t length)
 {
     size_t i = 0;
-    register char *p = target;
+    char *p = target;
 
     while(i < length)
     {
@@ -790,7 +790,7 @@ search_tlvlist(struct tlvlist *list,char *tag,TYPE tag_type)
 {
     long long int int_tag = 0;
     unsigned long long int uint_tag = 0;
-    register struct tlvdef *retval = NULL,*p;
+    struct tlvdef *retval = NULL,*p;
 
     if(list == NULL) return NULL;
 
@@ -885,7 +885,7 @@ static struct tlvdef *
 find_tlvdef(char *tag,TYPE tag_type)
 {
     size_t tlv_hash;
-    register struct tlvdef *retval = NULL;
+    struct tlvdef *retval = NULL;
 
     tlv_hash = hash(tag);
 
@@ -945,7 +945,7 @@ static void
 format_bit_string(char *target,BUFFER *source, size_t length,TYPE tag_type)
 {
     BUFFER mask;
-    register size_t i;
+    size_t i;
     size_t j;
 
     if(tag_type == T_BER)
@@ -975,7 +975,7 @@ format_bit_string(char *target,BUFFER *source, size_t length,TYPE tag_type)
 static TYPE
 search_type_mapping(char *type,struct type_mappings *types)
 {
-    register struct type_map *m = types->mappings;
+    struct type_map *m = types->mappings;
 
     while(m != NULL)
     {

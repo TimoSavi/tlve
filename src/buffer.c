@@ -75,7 +75,7 @@ static FILE_OFFSET toffset = (FILE_OFFSET) 0;
 void
 set_input_file(char *name)
 {
-    register struct input_file *f = files;
+    struct input_file *f = files;
 
     if(files == NULL)
     {
@@ -336,13 +336,13 @@ buffer(int command, size_t size)
             if(buffer_start == data_end) return 0;                   // got nothing, probably empty file
             break;
         case B_DESIRED:
-            if(data_end - new_data >= size) return 1;
+            if(buffer_unread() >= size) return 1;
             flush_buffer();
             break;
         case B_NEEDED:
-            if(data_end - new_data >= size) return 1;
+            if(buffer_unread() >= size) return 1;
             flush_buffer();
-            if(data_end - new_data >= size) return 1;
+            if(buffer_unread() >= size) return 1;
             return 0;
             break;
         case B_FLUSH:

@@ -107,7 +107,7 @@ static int lineno = 0;
 static int keyword;
 
 /* Current line, starting whitespaces and comments trimmed */
-static unsigned char *line = NULL;
+static char *line = NULL;
 static size_t line_length;
 
 /* rcfile handle */
@@ -225,7 +225,7 @@ search_config_item(char **table,int count,char *keyword)
 static inline
 int read_char()
 {
-    register int c;
+    int c;
     c = getc(rcfp);
     if(c == '\n') lineno++;
     return c;
@@ -245,7 +245,7 @@ int
 read_logical_line()
 {
     int c,prev;
-    int i = 0;
+    size_t i = 0;
     int quoted = 0;
 
     /* skip comment and empty lines */
@@ -272,7 +272,7 @@ read_logical_line()
 
     do
     {
-        line[i] = (unsigned char) c;
+        line[i] = (char) c;
         switch(c)
         {
             case COMMENT:

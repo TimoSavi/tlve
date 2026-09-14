@@ -57,7 +57,7 @@ size_t
 read_ber_tag(char *tag,TYPE *type,TYPE *constructor_type)
 {
     unsigned long long tag_value = (unsigned long long) 0;
-    register BUFFER *p;
+    BUFFER *p;
     BUFFER loctet;
     
     p = buffer_data();
@@ -146,7 +146,7 @@ read_ber_tag(char *tag,TYPE *type,TYPE *constructor_type)
 size_t 
 read_ber_length(FILE_OFFSET *length,size_t tag_consumed)
 {
-    register BUFFER *p;
+    BUFFER *p;
     unsigned long long l = (unsigned long long) 0;
     size_t len_bytes;
 
@@ -187,8 +187,8 @@ format_ber_bit_string(char *target,BUFFER *source, size_t length)
 {
     BUFFER mask;
     int use_last;
-    register int i;
-    int j;
+    size_t i;
+    size_t j;
 
     j = 0;
 

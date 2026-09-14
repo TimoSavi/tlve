@@ -246,7 +246,7 @@ print_list_add_names(char *names)
 static void
 reset_expression_result()
 {
-    register int i = expression_count;
+    int i = expression_count;
 
     while(i) expression_list[--i].result = 0;
 }
@@ -255,7 +255,7 @@ reset_expression_result()
 static int
 expression_list_all_true()
 {
-    register int i = expression_count;
+    int i = expression_count;
 
     while(i) if(!expression_list[--i].result) return 0;
     return 1;
@@ -265,7 +265,7 @@ expression_list_all_true()
 static int
 expression_list_any_true()
 {
-    register int i = expression_count;
+    int i = expression_count;
 
     while(i) if(expression_list[--i].result) return 1;
     return 0;
@@ -484,12 +484,12 @@ print_list_check_names()
 static int
 print_list_check_item(struct tlvitem *item)
 {
-    register int i,j;
+    int i,j;
     char *item_name;
 
     if(start_print_level != 0 || stop_print_level != MAX_LEVEL)  // should we first check start/stop levels
     {
-        if(item->level < start_print_level || item->level > stop_print_level) return 0;
+        if(item->level < (unsigned int) start_print_level || item->level > (unsigned int) stop_print_level) return 0;
     }
 
     if(!name_count) return 1;
@@ -517,7 +517,7 @@ print_list_check_item(struct tlvitem *item)
 static struct print_list *
 print_list_last()
 {
-    register struct print_list *p = print_list_start;
+    struct print_list *p = print_list_start;
 
     while(p != NULL)
     {
@@ -533,7 +533,7 @@ print_list_last()
 static struct expression *
 find_expression(char *name,int index)
 {
-    register int i=index;
+    int i=index;
 
     while (i < expression_count)
     {
@@ -572,7 +572,7 @@ check_expression_results()
                 }
                 break;
             case T_CONSTRUCTED:
-                if(p->item->level >= get_current_level()) return 1;
+                if(p->item->level >= (unsigned int) get_current_level()) return 1;
                 break;
         }
     }
@@ -585,7 +585,6 @@ check_expression_results()
 static int
 eval_expression_results()
 {
-
     if(expression_and)
     {
         return expression_list_all_true();
@@ -594,15 +593,13 @@ eval_expression_results()
         return expression_list_any_true();
     }
 }
-                
-
 
 /* evaluates item related expression
  */
 static void
 evaluate_expression(struct tlvitem *item)
 {
-    register int i = 0;
+    int i = 0;
     struct expression *e;
 
     while(i < expression_count)
@@ -1097,7 +1094,7 @@ print_list_purge(int force)
 static struct print_list *
 search_prev_constructor_tr_not_printed(struct tlvitem *item)
 {
-    register struct print_list *p;
+    struct print_list *p;
     struct print_list *ret = NULL;
 
     if(item == NULL) return NULL;
@@ -1139,7 +1136,7 @@ print_list_print_data(struct print_list *pitem)
 static int
 print_list_printable()
 {
-    register struct print_list *p;
+    struct print_list *p;
 
     p = print_list_start;
 
@@ -1157,7 +1154,7 @@ print_list_printable()
 static void
 print_list_do_print()
 {
-    register struct print_list *p;
+    struct print_list *p;
     struct print_list *prev_c;
     struct print *pdata;
     struct tlvitem *item,*last_item = NULL;
@@ -1207,7 +1204,7 @@ print_list_do_print()
     }
 
     while((prev_c = search_prev_constructor_tr_not_printed(last_item)) != NULL &&
-            (prev_c->item->level >= get_current_level()))
+            (prev_c->item->level >= (unsigned int) get_current_level()))
     {
         pdata = print_list_print_data(prev_c);
         print_item(prev_c->item,pdata->level_trailer,pdata->indent,NULL,NULL,format_level_trailer);
