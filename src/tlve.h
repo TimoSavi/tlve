@@ -351,6 +351,7 @@ char *print_list_path();
 void print_init_path();
 void print_list_clear_hold();
 char *print_list_hex_dump(BUFFER *,size_t); 
+void free_print_list(); 
 
 
 /* ber.c prototypes */

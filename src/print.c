@@ -49,6 +49,8 @@ static int name_count = 0;
 
 static char *dump_buffer = NULL;
 static size_t dump_buffer_len = 0;
+static char *trimmed = NULL;
+static int tsize = 0;
 /* expression list, used to select records */
 
 #define MAX_EXPRESSION 128
@@ -231,6 +233,7 @@ print_list_add_names(char *names)
         if(!*p) done = 1;
         if(p > s)
         {
+            if(name_count >= MAX_NAME) panic("Too many names in name list",NULL,NULL);
             *p = 0;
             name_list[name_count].name = xstrdup(s);
             name_list[name_count].length = strlen(s);
@@ -281,6 +284,8 @@ print_list_add_expression(char *exp)
     value = strchr(exp,'=');
 
     if(!value) panic("An expression must contain =",exp,NULL);
+
+    if(expression_count >= MAX_EXPRESSION) panic("Too many expressions in expression list",NULL,NULL);
 
     name = exp;
     *value=0;
@@ -828,8 +833,6 @@ format_common(char c,struct tlvitem *i,char *fencoding, char *toencoding)
 static char *
 trim(char *value)
 {
-    static char *trimmed = NULL;
-    static int tsize = 0;
     char *p,*e;
     int value_len;
      
@@ -980,7 +983,10 @@ print_item(struct tlvitem *i,char *data,char *indent,char *fencoding, char *toen
             case '%':
                 data++;
                 if(*data == 0) return;
-                print_list_writes((pf)(*data,i,fencoding,toencoding));
+                {
+                    char *formatted = (pf)(*data,i,fencoding,toencoding);
+                    if(formatted != NULL) print_list_writes(formatted);
+                }
                 data++;
                 break;
             case '\n':
@@ -1229,7 +1235,63 @@ print_list_print()
     } 
 }
 
-        
+/* Free print list and all associated memory structures */
+void
+free_print_list()
+{
+    int i;
+    struct print_list *p = print_list_start;
+    struct print_list *s;
 
+    while(p != NULL)
+    {
+        s = p->next;
+        print_list_purge_item(p);
+        p = s;
+    }
+    print_list_start = NULL;
 
+    for(i = 0; i < name_count; i++)
+    {
+        if(name_list[i].name != NULL)
+        {
+            free(name_list[i].name);
+            name_list[i].name = NULL;
+        }
+    }
+    name_count = 0;
 
+    for(i = 0; i < expression_count; i++)
+    {
+        if(expression_list[i].name != NULL)
+        {
+            free(expression_list[i].name);
+            expression_list[i].name = NULL;
+        }
+        if(expression_list[i].value != NULL)
+        {
+            free(expression_list[i].value);
+            expression_list[i].value = NULL;
+        }
+#ifdef HAVE_REGEX
+        regfree(&expression_list[i].reg);
+#endif
+    }
+    expression_count = 0;
+
+    if(dump_buffer != NULL)
+    {
+        free(dump_buffer);
+        dump_buffer = NULL;
+        dump_buffer_len = 0;
+    }
+
+    if(trimmed != NULL)
+    {
+        free(trimmed);
+        trimmed = NULL;
+        tsize = 0;
+    }
+
+    print_list_clear_hold();
+}

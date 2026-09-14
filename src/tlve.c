@@ -299,6 +299,7 @@ main (int argc, char **argv)
     print_list_close_output();
     free_input_files();
     free_buffer();
+    free_print_list();
 
     exit (EXIT_SUCCESS);
 }
