@@ -143,19 +143,46 @@ shell_escape(const char *str)
 static char *
 build_preprocessor_command(const char *template, const char *filename)
 {
+    while(*template == '|' || *template == ' ') template++;
+
     char *escaped_filename = shell_escape(filename);
     char *pos = strstr(template, "%s");
     char *cmd;
 
     if(pos != NULL)
     {
-        size_t prefix_len = pos - template;
-        size_t suffix_len = strlen(pos + 2);
+        const char *prefix_end = pos;
+        const char *suffix_start = pos + 2;
+
+        /* If %s was enclosed in quotes (e.g. "%s", '%s', \"%s\", or \'%s\'), strip the outer
+           quotes from the template since shell_escape already produces a properly single-quoted POSIX word. */
+        if(prefix_end >= template + 2 && *(prefix_end - 2) == '\\' && *(prefix_end - 1) == '"'
+           && suffix_start[0] == '\\' && suffix_start[1] == '"')
+        {
+            prefix_end -= 2;
+            suffix_start += 2;
+        } else if(prefix_end >= template + 2 && *(prefix_end - 2) == '\\' && *(prefix_end - 1) == '\''
+                  && suffix_start[0] == '\\' && suffix_start[1] == '\'')
+        {
+            prefix_end -= 2;
+            suffix_start += 2;
+        } else if(prefix_end > template && *(prefix_end - 1) == '"' && *suffix_start == '"')
+        {
+            prefix_end--;
+            suffix_start++;
+        } else if(prefix_end > template && *(prefix_end - 1) == '\'' && *suffix_start == '\'')
+        {
+            prefix_end--;
+            suffix_start++;
+        }
+
+        size_t prefix_len = (size_t) (prefix_end - template);
+        size_t suffix_len = strlen(suffix_start);
         size_t esc_len = strlen(escaped_filename);
         cmd = xmalloc(prefix_len + esc_len + suffix_len + 1);
         memcpy(cmd, template, prefix_len);
         memcpy(cmd + prefix_len, escaped_filename, esc_len);
-        memcpy(cmd + prefix_len + esc_len, pos + 2, suffix_len + 1);
+        memcpy(cmd + prefix_len + esc_len, suffix_start, suffix_len + 1);
     } else
     {
         size_t tlen = strlen(template);
