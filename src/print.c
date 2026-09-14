@@ -327,7 +327,7 @@ print_list_copy(struct tlvitem *i, struct print_list *p)
     {
         p->item = xmalloc(sizeof(struct tlvitem)); 
         cvl = i->converted_value_len;
-        cv = xmalloc(cvl);
+        cv = cvl ? xmalloc(cvl) : NULL;
     } else
     {
         cvl = p->item->converted_value_len;
@@ -343,13 +343,16 @@ print_list_copy(struct tlvitem *i, struct print_list *p)
     if(i->converted_value_len > cvl)
     {
         cvl = i->converted_value_len;
-        cv = xrealloc(cv,cvl);
+        cv = cv ? xrealloc(cv,cvl) : xmalloc(cvl);
     }
 
     p->item->converted_value_len = cvl;
     p->item->converted_value = cv;
 
-    memcpy(p->item->converted_value,i->converted_value,i->converted_value_len);
+    if(cv != NULL && i->converted_value != NULL && i->converted_value_len > 0)
+    {
+        memcpy(p->item->converted_value,i->converted_value,i->converted_value_len);
+    }
 }
 
 
@@ -723,6 +726,18 @@ format_common(char c,struct tlvitem *i,char *fencoding, char *toencoding)
 {
     static char number[128];
 
+    (void) fencoding;
+    (void) toencoding;
+
+    if(i == NULL)
+    {
+        if(c == '%') return "%";
+        if(c == '$') return "$";
+        if(c == 'f') return get_current_file_name();
+        if(c == 's') return structure.name;
+        return "";
+    }
+
     switch(c)
     {
         case '%':
@@ -802,22 +817,24 @@ trim(char *value)
 
     if(trimmed == NULL) 
     {
-        trimmed=xstrdup(value);
+        trimmed = xstrdup(value);
         tsize = value_len + 1;
     } else
     {
-        if(value_len > tsize)
+        if(value_len + 1 > tsize)
         {
             trimmed = xrealloc(trimmed,(size_t) (value_len + 1));
-            tsize = value_len;
+            tsize = value_len + 1;
         }
         strcpy(trimmed,value);
     }
 
     p = trimmed;
+    while(*p && isspace((unsigned char)*p)) p++;
+    if(!*p) return "";
+
     e = &trimmed[value_len - 1];
-    while(isspace(*p)) p++;
-    while(isspace(*e) && e > trimmed) e--;
+    while(e >= p && isspace((unsigned char)*e)) e--;
     *(e + 1) = 0;
 
     return p;
@@ -937,6 +954,7 @@ print_item(struct tlvitem *i,char *data,char *indent,char *fencoding, char *toen
         {
             case '%':
                 data++;
+                if(*data == 0) return;
                 print_list_writes((pf)(*data,i,fencoding,toencoding));
                 data++;
                 break;
