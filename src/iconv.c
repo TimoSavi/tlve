@@ -25,7 +25,7 @@
 
 /* conversion handle */
 #ifdef HAVE_ICONV_T
-static iconv_t *cd = (iconv_t) -1;
+static iconv_t cd = (iconv_t) -1;
 #endif
 
 /* previously used from/to pair 
