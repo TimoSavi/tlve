@@ -126,7 +126,7 @@ level_down(FILE_OFFSET size,struct tlvdef *tlv,TYPE form)
 {
     if(!enough_size(size)) buffer_error("Constructed element is larger than space left in parent element",&new);
     current_level++;
-    if(current_level == MAX_LEVEL + FIRST_LEVEL) panic("Maximum number of levels reached",NULL,NULL);
+    if(current_level >= MAX_LEVEL + FIRST_LEVEL) panic("Maximum number of levels reached",NULL,NULL);
     levels[current_level].size = size;
     levels[current_level].form = form;
     if(tlv != NULL && (tlv->content_tl != NULL))              // use tl from tlv if defined

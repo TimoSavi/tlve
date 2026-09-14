@@ -546,7 +546,7 @@ buffer_error(char *message,struct tlvitem *e)
         {
             fp = xfopen(file,"w",'b');
             fwrite(buffer_data(),write_to_debug,1,fp);
-            fprintf(stderr,"%s: first %d bytes of unprocessable data written to %s\n",program_name,(int) write_to_debug,file);
+            fprintf(stderr,"%s: first %zu bytes of unprocessable data written to %s\n",program_name,write_to_debug,file);
             fclose(fp);
         }
     }
@@ -555,9 +555,9 @@ buffer_error(char *message,struct tlvitem *e)
     {
         size_t pl = 10;
         
-        fprintf(stderr,"%s: Item info: Level: %u, Tag: %s, Length: %lld, Consumed: %lld, Remaining in buffer: %u, Dump: "
+        fprintf(stderr,"%s: Item info: Level: %u, Tag: %s, Length: %lld, Consumed: %lld, Remaining in buffer: %zu, Dump: "
                 ,program_name,e->level,e->tag,(long long int) e->length,(long long int) (e->raw_tl_length + e->raw_value_length)
-                ,(unsigned int) buffer_unread());
+                ,buffer_unread());
         
         if(e->raw_tl_length + e->raw_value_length < pl) pl = e->raw_tl_length + e->raw_value_length;
         fprintf(stderr," %s\n",print_list_hex_dump(e->raw_tl,pl));

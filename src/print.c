@@ -388,7 +388,7 @@ print_list_down(struct tlvitem *item)
     char *name = print_list_get_item_name(item);
     size_t ilen = strlen(name);
 
-    if(path_level == MAX_LEVEL) panic("Too deep hierarchy",NULL,NULL);
+    if(path_level >= MAX_LEVEL) panic("Too deep hierarchy",NULL,NULL);
 
     if(path_names[path_level].name == NULL)
     {
