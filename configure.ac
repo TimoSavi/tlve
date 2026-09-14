@@ -52,7 +52,7 @@ AC_FUNC_FORK
 AC_FUNC_MMAP
 AC_CHECK_FUNCS([setmode strcasecmp strncasecmp strchr sigaction])  
 AC_CHECK_FUNCS([strdup strerror strstr getline getopt_long regcomp setlocale nl_langinfo])  
-AC_CHECK_FUNCS([strtoll strtoull atoll iconv_open dup2 pipe munmap madvise])  
+AC_CHECK_FUNCS([strtoll strtoull atoll iconv_open dup2 pipe munmap madvise setvbuf isatty])  
 
 AC_CONFIG_FILES([Makefile
                  doc/Makefile

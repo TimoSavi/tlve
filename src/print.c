@@ -686,6 +686,20 @@ print_list_open_output(char *file)
     {
         ofp = xfopen(file,"w",'a');
     }
+#if defined(HAVE_SETVBUF) && defined(_IOFBF)
+    /* If writing to a regular file or pipe (not an interactive terminal), use 64 KB block buffer */
+#if defined(HAVE_ISATTY)
+    if(ofp != NULL && !isatty(fileno(ofp)))
+    {
+        setvbuf(ofp, NULL, _IOFBF, 65536);
+    }
+#else
+    if(ofp != NULL && ofp != stdout)
+    {
+        setvbuf(ofp, NULL, _IOFBF, 65536);
+    }
+#endif
+#endif
 }
 
 /* close the output file */
