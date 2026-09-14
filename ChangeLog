@@ -1,3 +1,13 @@
+2026-09-14  Timo Savinen  <tjsa@iki.fi>
+    * Version 2.4-preview
+    * Added native streaming JSON Lines (-j, --json) and pretty JSON (-J, --pretty) support
+    * Modernized with mmap() zero-copy file I/O and sequential readahead
+    * Accelerated tag matching with pre-parsed numeric tags and hash table pre-population
+    * Standardized 64-bit offsets and fixed-width types via <stdint.h>
+    * Enabled 64 KB block-buffered output I/O
+    * Fixed 26 bugs, security vulnerabilities (TLVEOPEN injection), and memory leaks
+    * Added automated regression test suite under tests/ (make check)
+
 2024-09-12  Timo Savinen  <tjsa@iki.fi>
     * Version 2.3-24
     * Updated configure.ac to be compatible with current environments

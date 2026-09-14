@@ -2,7 +2,7 @@ Source: tlve
 Section: misc
 Priority: optional
 Maintainer: Martin Christian <martin@christianix.de>
-Build-Depends: debhelper-compat (= 13), dh-autoreconf
+Build-Depends: debhelper-compat (= 13), dh-autoreconf, libjson-c-dev
 Standards-Version: 4.5.0
 Homepage: https://github.com/TimoSavi/tlve
 
