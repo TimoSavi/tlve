@@ -1039,8 +1039,15 @@ print_file_trailer()
 static void
 print_list_purge_item(struct print_list *pitem)
 {
-    if(pitem->item->converted_value_len) free(pitem->item->converted_value);
-    free(pitem->item);
+    if(pitem == NULL) return;
+    if(pitem->item != NULL)
+    {
+        if(pitem->item->converted_value_len && pitem->item->converted_value != NULL)
+        {
+            free(pitem->item->converted_value);
+        }
+        free(pitem->item);
+    }
     free(pitem);
 }
 
@@ -1097,7 +1104,7 @@ search_prev_constructor_tr_not_printed(struct tlvitem *item)
 
     while(p != NULL)
     {
-        if(p->item->tlv_type == T_CONSTRUCTED && !p->trailer_printed) ret = p;
+        if(p->item != NULL && p->item->tlv_type == T_CONSTRUCTED && !p->trailer_printed) ret = p;
         if(p->item == item && ret != NULL) return ret;
         p = p->next;
     }
