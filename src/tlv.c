@@ -760,6 +760,27 @@ add_hash_list(size_t h, struct tlvdef *item)
     list->tlv = item;
 }
 
+/* free hash list 
+ */
+static void
+free_tlvhash(void)
+{
+    int j;
+    struct tlvlist *list, *next;
+
+    for(j = 0; j < TLV_HASH_SIZE; j++)
+    {
+        list = tlvhash[j];
+        while(list != NULL)
+        {
+            next = list->next;
+            free(list);
+            list = next;
+        }
+        tlvhash[j] = NULL;
+    }
+}
+
 /* searches a tlvlist for a tag
    returns pointer tlvdef if found, if not found returns NULL
 
@@ -1324,9 +1345,9 @@ void
 execute()
 {
     struct tlvitem *i;
-    int pl_up,j;
+    int pl_up;
 
-    for(j = 0;j < TLV_HASH_SIZE;j++) tlvhash[j] = NULL;
+    free_tlvhash();
 
     print_init_path();
      
@@ -1374,5 +1395,13 @@ execute()
         }
         check_premature_eof();
         print_file_trailer();
+    }
+
+    free_tlvhash();
+    if(new.converted_value != NULL)
+    {
+        free(new.converted_value);
+        new.converted_value = NULL;
+        new.converted_value_len = 0;
     }
 }
