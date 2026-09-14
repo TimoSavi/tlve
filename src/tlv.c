@@ -114,7 +114,7 @@ enough_size(size_t size)
 {
     if(levels[current_level].form == T_DEFINITE)
     {
-        return (levels[current_level].size >= size);
+        return (levels[current_level].size >= 0 && (size_t) levels[current_level].size >= size);
     }
     return 1;
 }
@@ -945,7 +945,8 @@ static void
 format_bit_string(char *target,BUFFER *source, size_t length,TYPE tag_type)
 {
     BUFFER mask;
-    register int i,j;
+    register size_t i;
+    size_t j;
 
     if(tag_type == T_BER)
     {
@@ -1320,16 +1321,16 @@ static void
 check_premature_eof()
 {
     int i;
-    int wait_bytes = 0;
+    FILE_OFFSET wait_bytes = 0;
     int wait_eoc = 0;
-    char msg[100];
+    char msg[256];
 
     i = FIRST_LEVEL + 1;
     while(i <= get_current_level())
     {
-        if(levels[i].form == T_DEFINITE && levels[i].size > (size_t) 0 && !wait_bytes)
+        if(levels[i].form == T_DEFINITE && levels[i].size > 0 && !wait_bytes)
         {
-            wait_bytes = (int) levels[i].size;
+            wait_bytes = levels[i].size;
         } else if(levels[i].form == T_INDEFINITE)
         {
             wait_eoc++;
@@ -1339,9 +1340,12 @@ check_premature_eof()
 
     if(wait_bytes || wait_eoc)
     {
-        strcpy(msg,"Unexpected end of file:");
-        if(wait_bytes) sprintf(msg + strlen(msg)," expecting the file to be %d bytes larger", wait_bytes);
-        if(wait_eoc) sprintf(msg + strlen(msg)," expecting the file to have %d end-of-content elements", wait_eoc);
+        size_t off = 0;
+        off += snprintf(msg + off, sizeof(msg) - off, "Unexpected end of file:");
+        if(wait_bytes && off < sizeof(msg))
+            off += snprintf(msg + off, sizeof(msg) - off, " expecting the file to be %lld bytes larger", (long long int) wait_bytes);
+        if(wait_eoc && off < sizeof(msg))
+            snprintf(msg + off, sizeof(msg) - off, " expecting the file to have %d end-of-content elements", wait_eoc);
         buffer_error(msg,NULL);
     }
 }
