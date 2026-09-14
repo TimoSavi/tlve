@@ -36,12 +36,20 @@
 #include <fcntl.h>
 #endif
 
-#ifdef HAVE_INTTYPES_H
+#if defined(HAVE_STDINT_H)
+#include <stdint.h>
+#elif defined(HAVE_INTTYPES_H)
 #include <inttypes.h>
+#else
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
+typedef unsigned long long int uint64_t;
+typedef long long int int64_t;
 #endif
 
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h>
 #endif
 
 #ifdef HAVE_CTYPE_H
@@ -128,8 +136,8 @@
 /* Global structures */
 
 typedef unsigned int TYPE;
-typedef unsigned char BUFFER;
-typedef long long int FILE_OFFSET;   // use system maximum regardless of real offset
+typedef uint8_t BUFFER;
+typedef int64_t FILE_OFFSET;   /* 64-bit signed offset */
 
 /* Type mappings */
 struct type_map
