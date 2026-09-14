@@ -25,6 +25,8 @@
 
 #include "tlve.h"
 
+#ifdef HAVE_JSON
+
 #ifdef HAVE_LIBFASTJSON_JSON_H
 #include <libfastjson/json.h>
 #ifndef json_object_to_file
@@ -40,8 +42,6 @@
 #elif defined(HAVE_JSON_H)
 #include <json.h>
 #endif
-
-#ifdef HAVE_JSON
 
 int json_mode = 0;
 int json_pretty = 0;

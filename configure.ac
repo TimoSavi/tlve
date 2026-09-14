@@ -46,38 +46,49 @@ AC_TYPE_SIZE_T
 AC_STRUCT_TM
 
 # Checks for JSON libraries (json-c or fastjson)
-have_json=no
-m4_ifdef([PKG_CHECK_MODULES], [
-  PKG_CHECK_MODULES([JSON_C], [json-c], [
-    have_json=yes
-    AC_DEFINE([HAVE_JSON_C], [1], [Define to 1 if json-c is available])
-    LIBS="$LIBS $JSON_C_LIBS"
-  ], [
-    PKG_CHECK_MODULES([FASTJSON], [libfastjson], [
-      have_json=yes
-      AC_DEFINE([HAVE_FASTJSON], [1], [Define to 1 if libfastjson is available])
-      LIBS="$LIBS $FASTJSON_LIBS"
-      JSON_C_CFLAGS="$FASTJSON_CFLAGS"
-    ], [:])
-  ])
-])
+AC_ARG_WITH([json],
+  [AS_HELP_STRING([--without-json], [disable JSON output support])],
+  [],
+  [with_json=check])
 
-if test "x${have_json}" = "xno"; then
-  AC_SEARCH_LIBS([fjson_object_new_object], [fastjson], [
-    have_json=yes
-    AC_DEFINE([HAVE_FASTJSON], [1], [Define to 1 if libfastjson is available])
-  ], [
-    AC_SEARCH_LIBS([json_object_new_object], [json-c json], [
+have_json=no
+AS_IF([test "x$with_json" != "xno"], [
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([JSON_C], [json-c], [
       have_json=yes
       AC_DEFINE([HAVE_JSON_C], [1], [Define to 1 if json-c is available])
+      LIBS="$LIBS $JSON_C_LIBS"
     ], [
-      AC_MSG_WARN([Neither json-c nor libfastjson found. JSON output support will be disabled.])
+      PKG_CHECK_MODULES([FASTJSON], [libfastjson], [
+        have_json=yes
+        AC_DEFINE([HAVE_FASTJSON], [1], [Define to 1 if libfastjson is available])
+        LIBS="$LIBS $FASTJSON_LIBS"
+        JSON_C_CFLAGS="$FASTJSON_CFLAGS"
+      ], [:])
     ])
   ])
-fi
 
-AC_CHECK_HEADERS([libfastjson/json.h json-c/json.h json/json.h json.h])
+  if test "x${have_json}" = "xno"; then
+    AC_SEARCH_LIBS([fjson_object_new_object], [fastjson], [
+      have_json=yes
+      AC_DEFINE([HAVE_FASTJSON], [1], [Define to 1 if libfastjson is available])
+    ], [
+      AC_SEARCH_LIBS([json_object_new_object], [json-c json], [
+        have_json=yes
+        AC_DEFINE([HAVE_JSON_C], [1], [Define to 1 if json-c is available])
+      ], [
+        if test "x$with_json" = "xyes"; then
+          AC_MSG_ERROR([JSON support requested but neither json-c nor libfastjson found])
+        else
+          AC_MSG_WARN([Neither json-c nor libfastjson found. JSON output support will be disabled.])
+        fi
+      ])
+    ])
+  fi
+])
+
 if test "x${have_json}" = "xyes"; then
+  AC_CHECK_HEADERS([libfastjson/json.h json-c/json.h json/json.h json.h])
   AC_DEFINE([HAVE_JSON], [1], [Define to 1 if JSON library is available])
 fi
 AC_SUBST([JSON_C_CFLAGS])

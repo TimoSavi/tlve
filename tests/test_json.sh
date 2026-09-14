@@ -26,6 +26,17 @@ fi
 TMP_OUT="$(mktemp)"
 trap 'rm -f "$TMP_OUT"' EXIT
 
+# Skip test if JSON support was disabled at compile time
+if ! "$TLVE" -j /dev/null > /dev/null 2>&1; then
+    OUTPUT=$("$TLVE" -j /dev/null 2>&1 || true)
+    case "$OUTPUT" in
+        *"JSON output is not supported"*)
+            echo "Skipping: JSON output support not enabled at compile time"
+            exit 77
+            ;;
+    esac
+fi
+
 # 1. Definite length BER sequence to JSON Lines (-j)
 printf '\x30\x0a\x02\x01\x2a\x04\x05hello' | "$TLVE" -j -c "$BER_RC" -s BER -o "$TMP_OUT"
 grep -q '"name":"Sequence"' "$TMP_OUT"
