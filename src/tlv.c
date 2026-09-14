@@ -1206,7 +1206,7 @@ parse_tlv()
         new.raw_value_length = read_value(&new);
         if(!enough_size(new.raw_value_length)) buffer_error("Element is larger than space left in parent element",&new);
         tl_buffer_read(new.raw_value_length);                  // move ahead in buffer
-    } 
+    } else
     {
         new.raw_value_length = new.length;                     // constructed data size, do not tl_buffer_read, because this
     }                                                          // contains individual tlv triplets
