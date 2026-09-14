@@ -19,6 +19,7 @@
 */ 
 
 #include "tlve.h"
+#include <limits.h>
 
 
 #define B_UNIVERSAL 0x00
@@ -90,6 +91,7 @@ read_ber_tag(char *tag,TYPE *type,TYPE *constructor_type)
         {
             p++;
             if(!buffer_address_safe(p)) return (size_t) 0;
+            if(tag_value > (ULLONG_MAX >> 7)) return (size_t) 0;
             tag_value = (tag_value << 7) | ((BUFFER) *p & B_LONG_TAG_MASK);
         } while(*p & B_LAST_TAG);
     } else
@@ -157,6 +159,8 @@ read_ber_length(FILE_OFFSET *length,size_t tag_consumed)
         if(*p & B_LENGTH_LONG_MASK)         // long form
         {
             len_bytes = (BUFFER) *p & B_LENGTH_MASK;
+
+            if(len_bytes == 0 || len_bytes > sizeof(unsigned long long)) return (size_t) 0;
 
             if(!buffer_address_safe(p + len_bytes)) return (size_t) 0;
 
@@ -227,7 +231,8 @@ format_oid(char *target,BUFFER *source, size_t length)
 {
     unsigned int x,y;
     unsigned long int value;
-    int i;
+    size_t i;
+    char *t;
 
     target[0] = 0;
 
@@ -247,17 +252,23 @@ format_oid(char *target,BUFFER *source, size_t length)
         y = (unsigned int) *source - 80;
     }
 
-    sprintf(target,"%u %u",x,y);
+    t = target + sprintf(target,"%u %u",x,y);
 
     i = 1;
     value = (unsigned long int) 0;
 
     while(i < length)
     {
+        if(value > (ULONG_MAX >> 7))
+        {
+            /* Prevent shift overflow */
+            value = 0;
+            break;
+        }
         value = (value << 7) | ((BUFFER) source[i] & 0x7f);
         if(!(source[i] & 0x80))
         {
-            sprintf(target+strlen(target)," %lu",value);
+            t += sprintf(t," %lu",value);
             value = (unsigned long int) 0;
         }
         i++;
