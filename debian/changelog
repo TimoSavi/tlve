@@ -1,8 +1,8 @@
-tlve (2.4-preview) UNRELEASED; urgency=low
+tlve (2.4) UNRELEASED; urgency=low
 
   * Modernization, performance optimizations, bug fixes, and native JSON output.
 
- -- Timo Savinen <tjsa@iki.fi>  Mon, 14 Sep 2026 12:44:00 +0300
+ -- Timo Savinen <tjsa@iki.fi>  Wed, 16 Sep 2026 12:45:00 +0300
 
 tlve (2.3-24) UNRELEASED; urgency=low
 

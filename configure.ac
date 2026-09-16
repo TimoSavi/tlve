@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([tlve],[2.4-preview],[tjsa@iki.fi])
+AC_INIT([tlve],[2.4],[tjsa@iki.fi])
 AC_CONFIG_SRCDIR([src/tlve.c])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([config])

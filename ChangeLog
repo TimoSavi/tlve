@@ -1,5 +1,5 @@
-2026-09-14  Timo Savinen  <tjsa@iki.fi>
-    * Version 2.4-preview
+2026-09-16  Timo Savinen  <tjsa@iki.fi>
+    * Version 2.4
     * Added native streaming JSON Lines (-j, --json) and pretty JSON (-J, --pretty) support
     * Modernized with mmap() zero-copy file I/O and sequential readahead
     * Accelerated tag matching with pre-parsed numeric tags and hash table pre-population
